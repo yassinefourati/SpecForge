@@ -1,0 +1,237 @@
+{
+  "templates": [
+    {
+      "id": "db-entity",
+      "layer": "entities",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-entity.java.ftl",
+      "fileName": "[=entity.className].java",
+      "description": "Database flow: JPA entity per selected table"
+    },
+    {
+      "id": "db-dto",
+      "layer": "models",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-dto.java.ftl",
+      "fileName": "[=entity.db.dtoName].java",
+      "description": "Database flow: API record per table, with validation from constraints"
+    },
+    {
+      "id": "db-page-response",
+      "layer": "models",
+      "scope": "GLOBAL",
+      "flow": "DATABASE",
+      "template": "db-page-response.java.ftl",
+      "fileName": "PageResponse.java",
+      "description": "Database flow: stable JSON shape for list pages"
+    },
+    {
+      "id": "db-repository",
+      "layer": "repositories",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-repository.java.ftl",
+      "fileName": "[=entity.db.repositoryName].java",
+      "description": "Database flow: Spring Data repository with specifications"
+    },
+    {
+      "id": "db-mapper",
+      "layer": "services",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-mapper.java.ftl",
+      "fileName": "[=entity.db.mapperName].java",
+      "description": "Database flow: DTO ↔ entity mapping and merge patch"
+    },
+    {
+      "id": "db-value-conversions",
+      "layer": "services",
+      "scope": "GLOBAL",
+      "flow": "DATABASE",
+      "template": "db-value-conversions.java.ftl",
+      "fileName": "ValueConversions.java",
+      "description": "Database flow: converts JSON and query values to column types"
+    },
+    {
+      "id": "db-service",
+      "layer": "services",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-service.java.ftl",
+      "fileName": "[=entity.db.serviceName].java",
+      "description": "Database flow: CRUD, filtering and sorting per table"
+    },
+    {
+      "id": "db-controller",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-controller.java.ftl",
+      "fileName": "[=entity.db.controllerName].java",
+      "when": "entity.db.hasController()",
+      "description": "Database flow: REST endpoints per table (left out when the user removed the controller or moved every operation)"
+    },
+    {
+      "id": "db-usecase-controller",
+      "layer": "controllers",
+      "scope": "USECASE",
+      "flow": "DATABASE",
+      "template": "db-usecase-controller.java.ftl",
+      "fileName": "[=useCase.controllerName].java",
+      "description": "Database flow: a use-case controller composed from several tables (OPS-3)"
+    },
+    {
+      "id": "db-usecase-service",
+      "layer": "services",
+      "scope": "USECASE",
+      "flow": "DATABASE",
+      "template": "db-usecase-service.java.ftl",
+      "fileName": "[=useCase.serviceName].java",
+      "when": "useCase.has(\"WITH_CHILDREN\") || useCase.has(\"CHILDREN\") || useCase.has(\"AGGREGATE_CREATE\") || useCase.has(\"AGGREGATE_UPDATE\")",
+      "description": "Database flow: one transactional method per use-case operation that spans tables"
+    },
+    {
+      "id": "db-usecase-record",
+      "layer": "models",
+      "scope": "USECASE_RECORD",
+      "flow": "DATABASE",
+      "template": "db-usecase-record.java.ftl",
+      "fileName": "[=record.name].java",
+      "description": "Database flow: request and response records of use cases"
+    },
+    {
+      "id": "entity",
+      "layer": "entities",
+      "scope": "ENTITY",
+      "template": "entity.java.ftl",
+      "fileName": "[=entity.className].java",
+      "description": "JPA entity, one per entity schema",
+      "flow": "SPEC"
+    },
+    {
+      "id": "model",
+      "layer": "models",
+      "scope": "DTO",
+      "template": "model.java.ftl",
+      "fileName": "[=dto.className].java",
+      "description": "Plain data class for schemas that are not entities",
+      "flow": "SPEC"
+    },
+    {
+      "id": "enum",
+      "layer": "enums",
+      "scope": "ENUM",
+      "template": "enum.java.ftl",
+      "fileName": "[=enumDef.className].java",
+      "description": "Java enum with JSON value mapping",
+      "flow": "SPEC"
+    },
+    {
+      "id": "repository",
+      "layer": "repositories",
+      "scope": "ENTITY",
+      "template": "repository.java.ftl",
+      "fileName": "[=entity.repositoryName].java",
+      "description": "Spring Data JPA repository per entity",
+      "flow": "SPEC"
+    },
+    {
+      "id": "service",
+      "layer": "services",
+      "scope": "RESOURCE",
+      "template": "service.java.ftl",
+      "fileName": "[=resource.serviceName].java",
+      "description": "Service per resource (tag / path group) with CRUD bodies where detectable, or upstream calls in proxy mode",
+      "flow": "SPEC"
+    },
+    {
+      "id": "upstream-client",
+      "layer": "services",
+      "scope": "GLOBAL",
+      "template": "upstream-client.java.ftl",
+      "fileName": "UpstreamClient.java",
+      "when": "options.proxy",
+      "description": "Proxy mode: HTTP client for the upstream API (base URL, timeouts, credentials)"
+    },
+    {
+      "id": "controller",
+      "layer": "controllers",
+      "scope": "RESOURCE",
+      "template": "controller.java.ftl",
+      "fileName": "[=resource.controllerName].java",
+      "description": "REST controller per resource, mirroring the spec's paths and operations",
+      "flow": "SPEC"
+    },
+    {
+      "id": "security-config",
+      "layer": "security",
+      "scope": "GLOBAL",
+      "template": "security-config.java.ftl",
+      "fileName": "SecurityConfig.java",
+      "when": "security.present",
+      "description": "Spring Security filter chain and per-endpoint access rules"
+    },
+    {
+      "id": "api-key-filter",
+      "layer": "security",
+      "scope": "GLOBAL",
+      "template": "api-key-filter.java.ftl",
+      "fileName": "ApiKeyAuthFilter.java",
+      "when": "security.present && security.usesApiKey",
+      "description": "Authentication filter for apiKey security schemes"
+    },
+    {
+      "id": "forwarded-credential-filter",
+      "layer": "security",
+      "scope": "GLOBAL",
+      "template": "forwarded-credential-filter.java.ftl",
+      "fileName": "ForwardedCredentialFilter.java",
+      "when": "security.present && security.proxyForward",
+      "description": "Proxy mode with forwarded credentials: requires a credential that the upstream API then validates"
+    },
+    {
+      "id": "not-found",
+      "layer": "exceptions",
+      "scope": "GLOBAL",
+      "template": "ResourceNotFoundException.java.ftl",
+      "fileName": "ResourceNotFoundException.java",
+      "description": "Exception mapped to HTTP 404"
+    },
+    {
+      "id": "exception-handler",
+      "layer": "exceptions",
+      "scope": "GLOBAL",
+      "template": "ApiExceptionHandler.java.ftl",
+      "fileName": "ApiExceptionHandler.java",
+      "description": "Global @RestControllerAdvice (404, 400, 501)"
+    },
+    {
+      "id": "application",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "template": "application.java.ftl",
+      "fileName": "[=api.applicationClass].java",
+      "description": "@SpringBootApplication entry point"
+    },
+    {
+      "id": "pom",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "ROOT",
+      "template": "pom.xml.ftl",
+      "fileName": "pom.xml",
+      "description": "Maven build file"
+    },
+    {
+      "id": "properties",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "RESOURCE",
+      "template": "application.properties.ftl",
+      "fileName": "application.properties",
+      "description": "Database, JPA and security properties"
+    }
+  ]
+}

@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpecForge: OpenAPI to Spring Boot</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M9 22l7-12 7 12z' fill='none' stroke='white' stroke-width='2.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="vendor/codemirror.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M9 22l7-12 7 12z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3z M12 10v5 M12 17.5v.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-err" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v6 M12 16v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6 M12 7.5v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="topbar">
+  <div class="brand"><svg class="logo"><use href="#i-logo"/></svg><span class="brand-name">SpecForge</span><span class="brand-ver" id="version"></span></div>
+  <nav class="steps" aria-label="Steps">
+    <button class="step is-active" data-step="1" id="stepBtn1" type="button"><span class="n">1</span>Source</button>
+    <span class="sep db-only" hidden></span>
+    <button class="step db-only" data-step="select" id="stepBtnSelect" type="button" disabled hidden><span class="n">2</span>Select</button>
+    <span class="sep db-only" hidden></span>
+    <button class="step db-only" data-step="map" id="stepBtnMap" type="button" disabled hidden><span class="n">3</span>Map</button>
+    <span class="sep db-only" hidden></span>
+    <button class="step db-only" data-step="api" id="stepBtnApi" type="button" disabled hidden><span class="n">4</span>API</button>
+    <span class="sep"></span>
+    <button class="step" data-step="2" id="stepBtn2" type="button" disabled><span class="n">2</span>Settings</button>
+    <span class="sep"></span>
+    <button class="step" data-step="3" id="stepBtn3" type="button" disabled><span class="n">3</span>Preview &amp; generate</button>
+  </nav>
+  <div class="profile-bar">
+    <label class="build-from"><span>Build from</span>
+      <select id="sourceSwitch" aria-label="Build from">
+        <option value="">Choose…</option>
+        <option value="spec">Swagger / OpenAPI</option>
+        <option value="db">Database</option>
+      </select></label>
+    <!-- UIX-1: one Profile menu; the dot marks settings that differ from the saved profile -->
+    <div class="menu-wrap">
+      <button class="btn small menu-button" id="btnProfileMenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="profileMenu">
+        <span class="dirty-dot" id="profileDirty" hidden></span><span id="profileName">No profile</span><span class="caret" aria-hidden="true">▾</span>
+      </button>
+      <div class="menu" id="profileMenu" role="menu" aria-label="Profile" hidden>
+        <div class="menu-label" id="profileListLabel">Load a profile</div>
+        <div id="profileList" role="group" aria-labelledby="profileListLabel"></div>
+        <div class="menu-sep" role="separator"></div>
+        <button type="button" role="menuitem" id="btnProfileSave">Save</button>
+        <button type="button" role="menuitem" id="btnProfileSaveAs">Save as…</button>
+        <button type="button" role="menuitem" id="btnProfileExport">Share settings (download JSON)</button>
+        <button type="button" role="menuitem" id="btnProfileImport">Import settings…</button>
+        <div class="menu-sep" role="separator"></div>
+        <button type="button" role="menuitem" id="btnProfileDelete" class="danger">Delete this profile</button>
+      </div>
+    </div>
+    <input type="file" id="profileFile" accept=".json,application/json" hidden>
+    <button class="btn small icon" id="btnTheme" type="button" title="Toggle light / dark" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============================== STEP 1 ============================== -->
+  <section id="step1" class="panel">
+    <div class="panel-head">
+      <h1>What do you want to build from?</h1>
+      <p class="lead">SpecForge builds a Spring Boot project from an API definition or from an existing database.</p>
+    </div>
+
+    <div class="source-choice" role="group" aria-label="Build from">
+      <button type="button" class="choice" data-source="spec" aria-pressed="false">
+        <strong>Swagger / OpenAPI</strong>
+        <span>Build from an API definition: paste, upload or link a Swagger 2.0 / OpenAPI 3 file.</span>
+      </button>
+      <button type="button" class="choice" data-source="db" aria-pressed="false">
+        <strong>Database</strong>
+        <span>Build from an existing database: SpecForge reads its tables and you choose what to generate.</span>
+      </button>
+    </div>
+
+    <div id="specFlow" hidden>
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" role="tab" data-tab="paste" type="button">Paste</button>
+        <button class="tab" role="tab" data-tab="upload" type="button">Upload file</button>
+        <button class="tab" role="tab" data-tab="url" type="button">From URL</button>
+      </div>
+
+      <div class="tabpane" id="tab-paste">
+        <textarea id="specText" spellcheck="false" placeholder="openapi: 3.0.3&#10;info:&#10;  title: Pet Store&#10;  version: 1.0.0&#10;paths: {}"></textarea>
+        <div class="row between"><span class="muted small-text" id="pasteInfo">&nbsp;</span><button type="button" class="link" id="btnSample">Load a small sample</button></div>
+      </div>
+      <div class="tabpane" id="tab-upload" hidden>
+        <label class="dropzone" id="dropZone" for="specFile">
+          <svg class="ic big"><use href="#i-file"/></svg>
+          <strong>Drop a spec here</strong>
+          <span class="muted">or click to choose a .json, .yaml or .yml file</span>
+          <span class="file-info" id="fileInfo"></span>
+        </label>
+        <input type="file" id="specFile" accept=".json,.yaml,.yml,.txt,application/json" hidden>
+      </div>
+      <div class="tabpane" id="tab-url" hidden>
+        <label class="field"><span>Spec URL</span>
+          <input type="url" id="specUrl" placeholder="https://petstore3.swagger.io/api/v3/openapi.json" spellcheck="false">
+        </label>
+        <p class="muted small-text">Use the raw document (for example <code>/v3/api-docs</code>, <code>/swagger.json</code>, <code>/openapi.yaml</code>), not the Swagger UI page.</p>
+      </div>
+
+      <div class="row end">
+        <button type="button" class="btn primary" id="btnAnalyze">Analyze spec</button>
+      </div>
+    </div>
+
+    <div class="banner error" id="analysisError" hidden></div>
+
+    <div id="analysis" hidden>
+      <div class="card">
+        <div class="analysis-head">
+          <div>
+            <h2 id="aTitle"></h2>
+            <p class="muted" id="aMeta"></p>
+          </div>
+          <div class="stat-cards" id="statCards"></div>
+        </div>
+      </div>
+
+      <div class="card" id="messagesCard" hidden>
+        <h3>Validation &amp; warnings</h3>
+        <ul class="messages" id="messages"></ul>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Resources <span class="muted small-text">(one controller + service each)</span></h3>
+          <div id="resources" class="resources"></div>
+        </div>
+        <div class="card">
+          <h3>Schemas <span class="muted small-text">(entity or plain DTO: change if the guess is wrong)</span></h3>
+          <div class="table-wrap">
+            <table class="table" id="schemasTable">
+              <thead><tr><th>Schema</th><th>Becomes</th><th class="num">Fields</th></tr></thead>
+              <tbody id="schemasBody"></tbody>
+            </table>
+          </div>
+          <h3 class="mt" id="securityHead" hidden>Security schemes</h3>
+          <div id="securityList" class="chips"></div>
+        </div>
+      </div>
+
+      <div class="row end"><button type="button" class="btn primary" id="btnToStep2">Continue to settings →</button></div>
+    </div>
+    </div>
+
+    <!-- database flow, step 1: connection (CONN-1..5, SEC-1..4) -->
+    <div id="dbFlow" hidden>
+      <div class="card" id="savedConnections" hidden>
+        <h3>Reconnect</h3>
+        <div class="row gap wrap" id="savedList"></div>
+      </div>
+
+      <div class="card">
+        <div class="row between wrap gap">
+          <h3 class="flush">Database engine</h3>
+          <div class="row gap">
+            <input type="search" id="engineSearch" placeholder="Search engines…" spellcheck="false" aria-label="Search engines">
+            <button type="button" class="btn small ghost" id="btnDrivers">Drivers</button>
+          </div>
+        </div>
+        <div id="engineTiles"></div>
+        <input type="hidden" id="dbKind" value="POSTGRESQL">
+      </div>
+
+      <div class="card">
+        <div class="row between wrap gap">
+          <h3 class="flush" id="dbEngineTitle">Connection</h3>
+          <button type="button" class="btn small ghost" id="btnLeastPriv">Least-privilege login…</button>
+        </div>
+        <p class="engine-controls" id="dbControls"></p>
+        <div class="grid two tight">
+          <label class="field"><span>Connection name <span class="muted">(to save it)</span></span><input type="text" id="dbName" spellcheck="false" placeholder="e.g. Shop (local)"></label>
+          <label class="field" data-show="file" hidden><span>Database file</span><input type="text" id="dbPath" spellcheck="false" placeholder="e.g. C:/data/shop.sqlite"></label>
+          <label class="field" data-show="server"><span>Host</span><input type="text" id="dbHost" spellcheck="false" value="localhost"></label>
+          <label class="field" data-show="server"><span>Port</span><input type="number" id="dbPort" min="1" max="65535"></label>
+          <label class="field" data-show="server"><span id="dbDatabaseLabel">Database</span><input type="text" id="dbDatabase" spellcheck="false"></label>
+          <label class="field" data-show="schemas"><span>Schemas <span class="muted">(comma separated; empty = suggested)</span></span><input type="text" id="dbSchemas" spellcheck="false"></label>
+          <label class="field" data-show="auth"><span>User</span><input type="text" id="dbUser" spellcheck="false" autocomplete="off"></label>
+          <label class="field" data-show="auth"><span>Password</span><input type="password" id="dbPassword" autocomplete="new-password" placeholder="kept encrypted when saved"></label>
+        </div>
+        <details class="advanced">
+          <summary>Advanced</summary>
+          <div class="grid two tight">
+            <label class="field" data-show="auth"><span>Password from environment variable</span><input type="text" id="dbPasswordEnv" spellcheck="false" placeholder="e.g. SHOP_DB_PASSWORD"></label>
+            <label class="field" data-show="ssl"><span>SSL / TLS</span><select id="dbSsl"><option value="">Driver default</option><option value="disable">disable</option><option value="prefer">prefer</option><option value="require">require (trust the server certificate)</option><option value="verify-ca">verify-ca</option><option value="verify-full">verify-full</option></select></label>
+            <label class="field"><span>Raw JDBC URL <span class="muted">(overrides the fields above)</span></span><input type="text" id="dbUrl" spellcheck="false"></label>
+          </div>
+        </details>
+        <div class="row between wrap">
+          <span class="muted small-text" id="dbStatus" role="status"></span>
+          <div class="row gap">
+            <button type="button" class="btn" id="btnDbTest">Test connection</button>
+            <button type="button" class="btn" id="btnDbSave">Save connection</button>
+            <button type="button" class="btn primary" id="btnDbRead">Read database</button>
+          </div>
+        </div>
+        <div class="progress" id="dbProgress" hidden>
+          <div class="bar"><span id="dbProgressBar"></span></div>
+          <span class="muted small-text" id="dbProgressText"></span>
+          <button type="button" class="btn small ghost" id="btnDbCancel">Cancel</button>
+        </div>
+      </div>
+      <div class="banner error" id="dbError" hidden></div>
+    </div>
+  </section>
+
+  <!-- ============================== DATABASE: SELECT ============================== -->
+  <section id="stepSelect" class="panel" hidden>
+    <div class="panel-head">
+      <h1>Choose what to generate</h1>
+      <p class="lead" id="selLead">Every table becomes an entity with full CRUD unless you leave it out.</p>
+    </div>
+    <div class="card">
+      <div class="row between wrap gap">
+        <input type="search" id="selSearch" placeholder="Search tables…" spellcheck="false" aria-label="Search tables">
+        <div class="row gap">
+          <button type="button" class="btn small" id="btnSelAll">Select all</button>
+          <button type="button" class="btn small ghost" id="btnSelNone">Select none</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="selTable">
+          <thead><tr><th><span class="sr-only">Generate</span></th><th>Table</th><th class="num">Columns</th><th>Key</th><th>References</th><th class="num">Rows (est.)</th></tr></thead>
+          <tbody id="selBody"></tbody>
+        </table>
+      </div>
+      <p class="muted small-text" id="selInfo"></p>
+    </div>
+    <div class="card" id="selWarnings" hidden><h3>Needs your attention</h3><ul class="messages" id="selWarnList"></ul></div>
+    <div class="row between">
+      <button type="button" class="btn ghost" id="btnSelBack">&larr; Source</button>
+      <button type="button" class="btn primary" id="btnSelNext">Continue to mapping &rarr;</button>
+    </div>
+  </section>
+
+  <!-- ============================== DATABASE: MAP ============================== -->
+  <section id="stepMap" class="panel" hidden>
+    <div class="panel-head">
+      <h1>How tables become classes</h1>
+      <p class="lead">Everything is filled in with SpecForge's suggestion. Change any value; <span class="yours-chip">yours</span> marks your choices and ↺ goes back to the suggestion.</p>
+    </div>
+    <div class="row between wrap gap map-tools">
+      <input type="search" id="mapSearch" placeholder="Search classes or tables…" spellcheck="false" aria-label="Search classes or tables">
+      <div class="row gap">
+        <button type="button" class="btn small ghost" id="btnMapExpand">Expand all</button>
+        <button type="button" class="btn small ghost" id="btnMapCollapse">Collapse all</button>
+      </div>
+    </div>
+    <div id="mapList"></div>
+    <div class="card" id="joinCard" hidden>
+      <h3>Join tables</h3>
+      <p class="muted small-text">These tables only link two others, so they are mapped as many-to-many relations. Generate one as an entity of its own when it should have its own endpoints.</p>
+      <ul class="plain" id="joinList"></ul>
+    </div>
+    <div class="row between">
+      <button type="button" class="btn ghost" id="btnMapBack">&larr; Select</button>
+      <button type="button" class="btn primary" id="btnMapNext">Continue to endpoints &rarr;</button>
+    </div>
+  </section>
+
+  <!-- ============================== DATABASE: API ============================== -->
+  <section id="stepApi" class="panel" hidden>
+    <div class="panel-head">
+      <h1>Endpoints</h1>
+      <p class="lead">One controller per table with full CRUD. Untick an operation to leave it out, remove a controller, or build controllers by use case below.</p>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table class="table" id="apiTable">
+          <thead><tr><th>Controller</th><th>Path</th><th>List</th><th>Read</th><th>Create</th><th>Update</th><th>Patch</th><th>Delete</th></tr></thead>
+          <tbody id="apiBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" id="useCaseCard">
+      <div class="row between wrap gap">
+        <h3 class="flush">Use-case controllers</h3>
+        <form class="row gap" id="ucNewForm">
+          <input type="text" id="ucNewName" placeholder="e.g. Checkout" spellcheck="false" aria-label="New use-case controller name">
+          <button type="submit" class="btn small">Add controller</button>
+        </form>
+      </div>
+      <p class="muted small-text">Combine operations of several tables in one controller: create or update a parent with its children in one transaction, read a parent with its children, list a parent's children, or move a table's own operations here.</p>
+      <div id="ucList"></div>
+      <ul class="messages" id="ucWarnings"></ul>
+    </div>
+    <div class="row between">
+      <button type="button" class="btn ghost" id="btnApiBack">&larr; Map</button>
+      <button type="button" class="btn primary" id="btnApiNext">Continue to settings &rarr;</button>
+    </div>
+  </section>
+
+  <!-- ============================== STUDIO (STU-1 … STU-7) ============================== -->
+  <section id="studio" class="panel wide" hidden>
+    <div class="studio-bar row between wrap gap">
+      <div class="row gap wrap">
+        <h1 class="flush">Spring Boot Studio</h1>
+        <label class="field inline"><span>Template set</span><select id="stSet" aria-label="Template set"></select></label>
+        <button type="button" class="btn small" id="stNewSet">New set…</button>
+        <button type="button" class="btn small" id="stUseSet">Use for generation</button>
+        <button type="button" class="btn small ghost" id="stExport">Export ZIP</button>
+        <button type="button" class="btn small ghost" id="stImport">Import ZIP…</button>
+        <input type="file" id="stImportFile" accept=".zip,application/zip" hidden>
+        <button type="button" class="btn small ghost" id="stDeleteSet">Delete set</button>
+      </div>
+      <button type="button" class="btn" id="stClose">&larr; Back</button>
+    </div>
+    <p class="muted small-text" id="stInfo"></p>
+    <div class="studio">
+      <aside class="st-list" aria-label="Templates">
+        <input type="search" id="stSearch" placeholder="Search templates…" spellcheck="false" aria-label="Search templates">
+        <label class="check small-text"><input type="checkbox" id="stOnlyFlow" checked> Only templates for the current source</label>
+        <div id="stTemplates"></div>
+      </aside>
+      <div class="st-editor">
+        <div class="row between wrap gap st-head">
+          <div class="row gap"><strong id="stName">Choose a template</strong><span class="badge" id="stStatus" hidden></span><span class="dirty-dot" id="stDirty" hidden title="Unsaved changes"></span></div>
+          <div class="row gap wrap">
+            <button type="button" class="btn small primary" id="stCustomize" hidden>Customize</button>
+            <button type="button" class="btn small primary" id="stSave" hidden>Save</button>
+            <button type="button" class="btn small" id="stCompare" hidden>Compare with default</button>
+            <button type="button" class="btn small ghost" id="stReset" hidden>Reset to default</button>
+          </div>
+        </div>
+        <p class="muted small-text" id="stHint">Templates use FreeMarker: <code>&lt;#if …&gt;</code> for logic and <code>[=expr]</code> to insert a value; <code>${…}</code> passes through for Spring and Maven.</p>
+        <div id="stEditor" class="st-cm"></div>
+        <div class="banner error" id="stError" hidden></div>
+      </div>
+      <div class="st-preview">
+        <div class="row gap wrap">
+          <label class="field inline"><span>Preview with</span><select id="stItem" aria-label="Sample"></select></label>
+          <label class="check small-text"><input type="checkbox" id="stDiff"> Differences from the default</label>
+          <button type="button" class="btn small ghost" id="stVerify" title="Generates the whole project with this set and compiles it with Maven">Verify by compiling</button>
+        </div>
+        <p class="muted small-text" id="stNote"></p>
+        <div class="code-head"><span class="code-path" id="stFile"></span><span class="spacer"></span><span class="muted small-text" id="stTime"></span></div>
+        <pre class="code st-out"><code id="stOutput" class="hljs"></code></pre>
+        <ul class="messages" id="stJava"></ul>
+        <details class="st-vars" id="stVarsBox">
+          <summary>Variables for this sample <span class="muted small-text">(click to insert)</span></summary>
+          <input type="search" id="stVarSearch" placeholder="Filter variables…" spellcheck="false" aria-label="Filter variables">
+          <ul class="vtree" id="stVars"></ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== STEP 2 ============================== -->
+  <section id="step2" class="panel" hidden>
+    <div class="panel-head">
+      <h1>Settings</h1>
+      <p class="lead">Where files go, how things are named, and which options to generate. Everything here can be saved as a profile (top right).</p>
+    </div>
+
+    <div class="card usecase" data-flow="spec">
+      <h3>What are you building?</h3>
+      <p class="muted small-text">Two quick questions decide where the generated services get their data.</p>
+      <div class="grid two tight">
+        <label class="field"><span>Do you want your own database for this API?</span>
+          <select data-path="options.serviceMode">
+            <option value="DATABASE">Yes, rebuild it: my own entities, repositories and database</option>
+            <option value="PROXY">No, the API already exists: call its endpoints</option>
+          </select></label>
+        <label class="field" data-show-when="proxy"><span>Who signs in to that API?</span>
+          <select data-path="security.upstreamAuth">
+            <option value="FORWARD">Each caller, with their own account (their credentials are passed through)</option>
+            <option value="SERVICE_ACCOUNT">This app, with one account of its own (callers sign in here)</option>
+          </select></label>
+        <label class="field" data-show-when="proxy"><span>Where is the API?</span>
+          <input type="text" id="upstreamUrl" data-path="options.upstreamUrl" spellcheck="false" placeholder="from the spec">
+          <small class="muted">Leave empty to use the spec's server. Can be changed later with UPSTREAM_BASE_URL.</small></label>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Output</h3>
+        <label class="field"><span>Target directory</span>
+          <div class="input-btn"><input type="text" data-path="targetDir" spellcheck="false" placeholder="/path/to/my-project"><button type="button" class="btn" data-browse="targetDir">Browse…</button></div>
+          <small class="muted">The project root. Nothing is written until you choose “Write to disk” in step 3.</small>
+        </label>
+        <div class="grid two tight">
+          <label class="field"><span>Base package</span><input type="text" data-path="basePackage" data-kind="package" spellcheck="false"></label>
+          <label class="field"><span>Maven artifactId</span><input type="text" data-path="options.artifactId" spellcheck="false" placeholder="from the spec title"></label>
+          <label class="field"><span>Java source root</span><input type="text" data-path="sourceRoot" spellcheck="false"></label>
+          <label class="field"><span>Resources root</span><input type="text" data-path="resourceRoot" spellcheck="false"></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Options</h3>
+        <div class="grid two tight">
+          <label class="check"><input type="checkbox" data-path="options.lombok"><span>Use Lombok</span></label>
+          <label class="check"><input type="checkbox" data-path="options.validation"><span>Validation annotations</span></label>
+          <label class="check"><input type="checkbox" data-path="options.generateProjectFiles"><span>Generate pom.xml, Application, properties</span></label>
+          <label class="check"><input type="checkbox" data-path="security.enabled"><span>Generate Spring Security</span></label>
+        </div>
+        <div class="grid two tight">
+          <label class="field"><span>Namespace</span>
+            <select data-path="options.namespace"><option value="JAKARTA">jakarta.* (Spring Boot 3)</option><option value="JAVAX">javax.* (Spring Boot 2.7)</option></select></label>
+          <label class="field"><span>Spring Boot version</span>
+            <select id="bootSelect" aria-describedby="bootHint"></select>
+            <input type="text" id="bootOther" data-path="options.springBootVersion" spellcheck="false" placeholder="e.g. 4.1.2" aria-label="Other Spring Boot version" hidden>
+            <small class="muted" id="bootHint"></small></label>
+          <label class="field"><span>Java version</span><select id="javaSelect" data-path="options.javaVersion"></select></label>
+          <label class="field" data-hide-when="proxy" data-flow="spec"><span>Database</span>
+            <select data-path="options.database"><option value="H2">H2 (in-memory)</option><option value="POSTGRES">PostgreSQL</option></select></label>
+          <label class="field"><span>date-time type</span>
+            <select data-path="options.dateTimeType"><option>OffsetDateTime</option><option>LocalDateTime</option><option>Instant</option><option>ZonedDateTime</option></select></label>
+          <label class="field" data-hide-when="proxy" data-flow="spec"><span>Entity detection</span>
+            <select data-path="options.entityDetection"><option value="AUTO">Automatic</option><option value="ALL_ENTITIES">Every object schema is an entity</option></select></label>
+          <label class="field"><span>Base path</span><input type="text" data-path="options.basePath" spellcheck="false" placeholder="from servers[0].url"></label>
+          <label class="field"><span>Maven groupId</span><input type="text" data-path="options.groupId" spellcheck="false" placeholder="base package"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Layers: packages and folders</h3>
+      <p class="muted small-text">Each layer is a sub-package of the base package (empty = the base package itself). Give a layer its own <em>module root</em> to write it into a different project folder, for example a separate API module.</p>
+      <div class="table-wrap">
+        <table class="table layers">
+          <thead><tr><th>Layer</th><th>On</th><th>Sub-package</th><th>Resulting package</th><th>Module root (optional)</th></tr></thead>
+          <tbody id="layersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Naming conventions</h3>
+        <p class="muted small-text"><code>{Name}</code> is replaced by the schema / tag name in PascalCase.</p>
+        <div class="grid two tight" id="namingGrid"></div>
+        <div class="grid two tight">
+          <label class="field"><span>Table names</span>
+            <select data-path="naming.tableStyle"><option value="PLURAL_SNAKE">plural snake_case (pets)</option><option value="SNAKE">snake_case (pet)</option><option value="AS_IS">as in the spec</option></select></label>
+          <label class="field"><span>Table prefix</span><input type="text" data-path="naming.tablePrefix" spellcheck="false" placeholder="e.g. app_"></label>
+          <label class="field"><span>Group operations by</span>
+            <select data-path="naming.resourceGrouping"><option value="TAG">tag (falls back to path)</option><option value="PATH">first path segment</option></select></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Security</h3>
+        <div class="grid two tight">
+          <label class="field"><span>Endpoint access rules</span>
+            <select data-path="security.accessRules"><option value="MATCHERS">URL rules in SecurityConfig</option><option value="METHOD">@PreAuthorize on controller methods</option><option value="BOTH">Both</option></select></label>
+          <label class="field"><span>Scope authority prefix</span><input type="text" data-path="security.scopeAuthorityPrefix" spellcheck="false"></label>
+        </div>
+        <p class="muted small-text">API key, HTTP basic / bearer, OAuth2 and OpenID Connect schemes found in the spec drive the generated configuration. OAuth2 / OIDC and bearer use the Spring resource-server JWT support.</p>
+
+        <h3 class="mt">Templates</h3>
+        <label class="field"><span>External template folder</span>
+          <div class="input-btn"><input type="text" data-path="templatesDir" spellcheck="false" placeholder="default: ~/.specforge/templates (when it exists)"><button type="button" class="btn" data-browse="templatesDir">Browse…</button></div>
+        </label>
+        <div class="row gap">
+          <button type="button" class="btn primary" id="btnOpenStudio">Customize code… (Studio)</button>
+          <button type="button" class="btn" id="btnExportTemplates">Export default templates…</button>
+          <button type="button" class="btn ghost" id="btnReloadTemplates">Reload list</button>
+        </div>
+        <p class="muted small-text" id="templatesInfo"></p>
+        <div class="table-wrap short">
+          <table class="table"><thead><tr><th>Template</th><th>Layer</th><th>Source</th><th></th></tr></thead><tbody id="templatesBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row between">
+      <button type="button" class="btn ghost" id="btnBack1">← Back</button>
+      <button type="button" class="btn primary" id="btnToStep3">Preview files →</button>
+    </div>
+  </section>
+
+  <!-- ============================== STEP 3 ============================== -->
+  <section id="step3" class="panel wide" hidden>
+    <div class="panel-head row between wrap">
+      <div>
+        <h1>Preview &amp; generate</h1>
+        <p class="lead">Nothing has been written yet. Review the files, then write them to disk or download a ZIP.</p>
+      </div>
+      <div class="row gap wrap actions">
+        <label class="field inline"><span>If a file exists</span>
+          <select id="overwrite">
+            <option value="SKIP">Skip it (never overwrite)</option>
+            <option value="BACKUP">Back it up as .bak, then overwrite</option>
+            <option value="OVERWRITE">Overwrite it</option>
+          </select>
+        </label>
+        <button type="button" class="btn" id="btnZip">Download ZIP</button>
+        <button type="button" class="btn primary" id="btnWrite">Write to disk</button>
+      </div>
+    </div>
+
+    <div class="banner error" id="previewError" hidden></div>
+    <div class="row gap wrap" id="chips"></div>
+    <details class="card compact" id="previewMessagesWrap" hidden>
+      <summary id="previewMessagesSummary"></summary>
+      <ul class="messages" id="previewMessages"></ul>
+    </details>
+
+    <div class="viewer">
+      <aside class="tree-pane">
+        <input type="search" id="fileFilter" placeholder="Filter files…" spellcheck="false">
+        <div id="tree" class="tree" role="tree"></div>
+      </aside>
+      <div class="code-pane">
+        <div class="code-head">
+          <span class="code-path" id="viewerPath">Select a file</span>
+          <span class="badge" id="viewerBadge" hidden></span>
+          <span class="spacer"></span>
+          <button type="button" class="btn small ghost" id="btnCustomizeFile" hidden>Customize the template behind this file</button>
+          <button type="button" class="btn small ghost" id="btnCopy">Copy</button>
+        </div>
+        <pre class="code"><code id="viewerCode" class="hljs"></code></pre>
+      </div>
+    </div>
+
+    <div class="row between">
+      <button type="button" class="btn ghost" id="btnBack2">← Settings</button>
+      <button type="button" class="btn ghost" id="btnRefresh">Refresh preview</button>
+    </div>
+  </section>
+</main>
+
+<!-- directory chooser -->
+<dialog id="dirDialog">
+  <form method="dialog" class="dlg">
+    <h3>Choose a folder</h3>
+    <div class="input-btn"><input type="text" id="dirPath" spellcheck="false"><button type="button" class="btn" id="dirGo">Go</button></div>
+    <div class="row gap"><button type="button" class="btn small" id="dirUp">↑ Up</button><button type="button" class="btn small" id="dirHome">Home</button><span class="muted small-text" id="dirNote"></span></div>
+    <ul class="dirlist" id="dirList"></ul>
+    <div class="row end gap"><button type="button" class="btn ghost" id="dirCancel">Cancel</button><button type="button" class="btn primary" id="dirChoose">Use this folder</button></div>
+  </form>
+</dialog>
+
+<!-- simple text prompt -->
+<dialog id="nameDialog">
+  <form method="dialog" class="dlg" id="nameForm">
+    <h3 id="nameTitle"></h3>
+    <label class="field"><span id="nameLabel"></span><input type="text" id="nameInput" spellcheck="false" autocomplete="off"></label>
+    <div class="row end gap"><button type="button" class="btn ghost" id="nameCancel">Cancel</button><button type="submit" class="btn primary" id="nameOk">OK</button></div>
+  </form>
+</dialog>
+
+<!-- result of writing -->
+<dialog id="resultDialog">
+  <form method="dialog" class="dlg wide">
+    <h3 id="resultTitle">Done</h3>
+    <div id="resultBody"></div>
+    <div class="row end"><button class="btn primary" value="close">Close</button></div>
+  </form>
+</dialog>
+
+<!-- template source viewer -->
+<dialog id="tplDialog">
+  <form method="dialog" class="dlg wide">
+    <h3 id="tplName"></h3>
+    <pre class="code small"><code id="tplCode" class="hljs"></code></pre>
+    <div class="row end"><button class="btn primary" value="close">Close</button></div>
+  </form>
+</dialog>
+
+<!-- least-privilege login (CONN-5) -->
+<dialog id="lpDialog">
+  <form method="dialog" class="dlg wide">
+    <h3 id="lpTitle">Least-privilege login</h3>
+    <p class="muted small-text">For your DBA to run once. It creates a login that can read the database structure and nothing else. SpecForge never runs it.</p>
+    <pre class="code small"><code id="lpCode"></code></pre>
+    <div class="row end gap"><button type="button" class="btn" id="lpCopy">Copy</button><button class="btn primary" value="close">Close</button></div>
+  </form>
+</dialog>
+
+<!-- bundled drivers (DRV-3, DRV-5) -->
+<dialog id="driversDialog">
+  <form method="dialog" class="dlg wide">
+    <h3>Bundled database drivers</h3>
+    <p class="muted small-text">Every driver ships inside SpecForge and was checked when it started.</p>
+    <div class="table-wrap">
+      <table class="table"><thead><tr><th>Engine</th><th>Driver</th><th>Version</th><th>License</th><th>Status</th></tr></thead><tbody id="driversBody"></tbody></table>
+    </div>
+    <div class="row end"><button class="btn primary" value="close">Close</button></div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="vendor/highlight.min.js"></script>
+<script src="vendor/codemirror.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

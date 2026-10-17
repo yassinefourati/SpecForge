@@ -1,0 +1,39 @@
+# CI stages from docs/prompts/phase-database-first.md §17.1.
+name: ci
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 2 * * *"   # nightly
+  workflow_dispatch:
+
+jobs:
+  fast:
+    # unit tests, golden files, and integration tests via Testcontainers (Docker is available on ubuntu runners):
+    # PostgreSQL, MySQL, MariaDB, SQLite and H2; SQL Server, Oracle and Db2 run nightly (large, slow images)
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - run: mvn -B verify
+
+  nightly:
+    # the Boot matrix (S2) and every tier-1 engine end to end (milestone 2)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - run: mvn -B verify -Dspecforge.matrix=true -Dspecforge.engines=all

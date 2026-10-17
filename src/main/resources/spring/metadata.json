@@ -1,0 +1,1935 @@
+{
+  "fetchedAt" : "2026-10-17T20:05:19Z",
+  "bootDefault" : "4.1.1",
+  "javaDefault" : "17",
+  "lines" : [ {
+    "version" : "4.1.1",
+    "origin" : "initializr",
+    "javaVersions" : [ "27", "25", "21", "17" ],
+    "base" : [ {
+      "groupId" : "org.springframework.boot",
+      "artifactId" : "spring-boot-starter-test",
+      "scope" : "test",
+      "optional" : false
+    } ],
+    "dependencies" : {
+      "web" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-webmvc",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-webmvc-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "data-jpa" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-jpa",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-jpa-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "validation" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-validation",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-validation-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "security" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "oauth2-resource-server" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security-oauth2-resource-server",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security-oauth2-resource-server-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "lombok" : [ {
+        "groupId" : "org.projectlombok",
+        "artifactId" : "lombok",
+        "scope" : "compile",
+        "optional" : true
+      } ],
+      "actuator" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-actuator",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-actuator-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "h2" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-h2console",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "com.h2database",
+        "artifactId" : "h2",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "postgresql" : [ {
+        "groupId" : "org.postgresql",
+        "artifactId" : "postgresql",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "mysql" : [ {
+        "groupId" : "com.mysql",
+        "artifactId" : "mysql-connector-j",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "mariadb" : [ {
+        "groupId" : "org.mariadb.jdbc",
+        "artifactId" : "mariadb-java-client",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "sqlserver" : [ {
+        "groupId" : "com.microsoft.sqlserver",
+        "artifactId" : "mssql-jdbc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "oracle" : [ {
+        "groupId" : "com.oracle.database.jdbc",
+        "artifactId" : "ojdbc17",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "db2" : [ {
+        "groupId" : "com.ibm.db2",
+        "artifactId" : "jcc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "sqlite" : [ {
+        "groupId" : "org.xerial",
+        "artifactId" : "sqlite-jdbc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "flyway" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-flyway",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-flyway-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "liquibase" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-liquibase",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-liquibase-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "data-mongodb" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-mongodb",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-mongodb-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "data-elasticsearch" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-elasticsearch",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-elasticsearch-test",
+        "scope" : "test",
+        "optional" : false
+      } ]
+    }
+  }, {
+    "version" : "4.0.8",
+    "origin" : "initializr",
+    "javaVersions" : [ "27", "25", "21", "17" ],
+    "base" : [ {
+      "groupId" : "org.springframework.boot",
+      "artifactId" : "spring-boot-starter-test",
+      "scope" : "test",
+      "optional" : false
+    } ],
+    "dependencies" : {
+      "web" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-webmvc",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-webmvc-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "data-jpa" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-jpa",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-jpa-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "validation" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-validation",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-validation-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "security" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "oauth2-resource-server" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security-oauth2-resource-server",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security-oauth2-resource-server-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "lombok" : [ {
+        "groupId" : "org.projectlombok",
+        "artifactId" : "lombok",
+        "scope" : "compile",
+        "optional" : true
+      } ],
+      "actuator" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-actuator",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-actuator-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "h2" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-h2console",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "com.h2database",
+        "artifactId" : "h2",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "postgresql" : [ {
+        "groupId" : "org.postgresql",
+        "artifactId" : "postgresql",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "mysql" : [ {
+        "groupId" : "com.mysql",
+        "artifactId" : "mysql-connector-j",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "mariadb" : [ {
+        "groupId" : "org.mariadb.jdbc",
+        "artifactId" : "mariadb-java-client",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "sqlserver" : [ {
+        "groupId" : "com.microsoft.sqlserver",
+        "artifactId" : "mssql-jdbc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "oracle" : [ {
+        "groupId" : "com.oracle.database.jdbc",
+        "artifactId" : "ojdbc17",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "db2" : [ {
+        "groupId" : "com.ibm.db2",
+        "artifactId" : "jcc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "sqlite" : [ {
+        "groupId" : "org.xerial",
+        "artifactId" : "sqlite-jdbc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "flyway" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-flyway",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-flyway-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "liquibase" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-liquibase",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-liquibase-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "data-mongodb" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-mongodb",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-mongodb-test",
+        "scope" : "test",
+        "optional" : false
+      } ],
+      "data-elasticsearch" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-elasticsearch",
+        "scope" : "compile",
+        "optional" : false
+      }, {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-elasticsearch-test",
+        "scope" : "test",
+        "optional" : false
+      } ]
+    }
+  }, {
+    "version" : "3.5.16",
+    "origin" : "maven-central",
+    "javaVersions" : [ "25", "21", "17" ],
+    "base" : [ {
+      "groupId" : "org.springframework.boot",
+      "artifactId" : "spring-boot-starter-test",
+      "scope" : "test",
+      "optional" : false
+    } ],
+    "dependencies" : {
+      "web" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-web",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "data-jpa" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-jpa",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "validation" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-validation",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "security" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-security",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "oauth2-resource-server" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-oauth2-resource-server",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "lombok" : [ {
+        "groupId" : "org.projectlombok",
+        "artifactId" : "lombok",
+        "scope" : "compile",
+        "optional" : true
+      } ],
+      "actuator" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-actuator",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "h2" : [ {
+        "groupId" : "com.h2database",
+        "artifactId" : "h2",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "postgresql" : [ {
+        "groupId" : "org.postgresql",
+        "artifactId" : "postgresql",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "mysql" : [ {
+        "groupId" : "com.mysql",
+        "artifactId" : "mysql-connector-j",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "mariadb" : [ {
+        "groupId" : "org.mariadb.jdbc",
+        "artifactId" : "mariadb-java-client",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "sqlserver" : [ {
+        "groupId" : "com.microsoft.sqlserver",
+        "artifactId" : "mssql-jdbc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "oracle" : [ {
+        "groupId" : "com.oracle.database.jdbc",
+        "artifactId" : "ojdbc11",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "db2" : [ {
+        "groupId" : "com.ibm.db2",
+        "artifactId" : "jcc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "sqlite" : [ {
+        "groupId" : "org.xerial",
+        "artifactId" : "sqlite-jdbc",
+        "scope" : "runtime",
+        "optional" : false
+      } ],
+      "flyway" : [ {
+        "groupId" : "org.flywaydb",
+        "artifactId" : "flyway-core",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "liquibase" : [ {
+        "groupId" : "org.liquibase",
+        "artifactId" : "liquibase-core",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "data-mongodb" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-mongodb",
+        "scope" : "compile",
+        "optional" : false
+      } ],
+      "data-elasticsearch" : [ {
+        "groupId" : "org.springframework.boot",
+        "artifactId" : "spring-boot-starter-data-elasticsearch",
+        "scope" : "compile",
+        "optional" : false
+      } ]
+    }
+  } ],
+  "bomDriverVersions" : {
+    "db2-jdbc.version" : "12.1.5.0",
+    "elasticsearch-client.version" : "9.4.5",
+    "h2.version" : "2.4.240",
+    "mariadb.version" : "3.5.10",
+    "mongodb.version" : "5.8.1",
+    "mssql-jdbc.version" : "13.4.0.jre11",
+    "mysql.version" : "9.7.0",
+    "oracle-database.version" : "23.26.3.0.0",
+    "postgresql.version" : "42.7.13",
+    "sqlite-jdbc.version" : "3.53.2.1"
+  },
+  "catalog" : [ {
+    "id" : "native",
+    "name" : "GraalVM Native Support",
+    "group" : "Developer Tools",
+    "description" : "Support for compiling Spring applications to native executables using the GraalVM native-image compiler.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "dgs-codegen",
+    "name" : "GraphQL DGS Code Generation",
+    "group" : "Developer Tools",
+    "description" : "Generate data types and type-safe APIs for querying GraphQL APIs by parsing schema files.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "devtools",
+    "name" : "Spring Boot DevTools",
+    "group" : "Developer Tools",
+    "description" : "Provides fast application restarts, LiveReload, and configurations for enhanced development experience.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/using/devtools.html"
+  }, {
+    "id" : "lombok",
+    "name" : "Lombok",
+    "group" : "Developer Tools",
+    "description" : "Java annotation library which helps to reduce boilerplate code.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "configuration-processor",
+    "name" : "Spring Configuration Processor",
+    "group" : "Developer Tools",
+    "description" : "Generate metadata for developers to offer contextual help and \"code completion\" when working with custom configuration keys (ex.application.properties/.yml files).",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/specification/configuration-metadata/annotation-processor.html"
+  }, {
+    "id" : "docker-compose",
+    "name" : "Docker Compose Support",
+    "group" : "Developer Tools",
+    "description" : "Provides docker compose support for enhanced development experience.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/features/dev-services.html#features.dev-services.docker-compose"
+  }, {
+    "id" : "modulith",
+    "name" : "Spring Modulith",
+    "group" : "Developer Tools",
+    "description" : "Support for building modular monolithic applications.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-modulith/reference/"
+  }, {
+    "id" : "web",
+    "name" : "Spring Web",
+    "group" : "Web",
+    "description" : "Build web, including RESTful, applications using Spring MVC. Uses Apache Tomcat as the default embedded container.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/servlet.html"
+  }, {
+    "id" : "webflux",
+    "name" : "Spring Reactive Web",
+    "group" : "Web",
+    "description" : "Build reactive web applications with Spring WebFlux and Netty.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/reactive.html"
+  }, {
+    "id" : "spring-restclient",
+    "name" : "HTTP Client",
+    "group" : "Web",
+    "description" : "Spring Boot integration for RestClient and RestTemplate to make HTTP requests.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/rest-client.html#io.rest-client.restclient"
+  }, {
+    "id" : "spring-webclient",
+    "name" : "Reactive HTTP Client",
+    "group" : "Web",
+    "description" : "Spring Boot integration for WebClient to make reactive HTTP requests.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/rest-client.html#io.rest-client.webclient"
+  }, {
+    "id" : "graphql",
+    "name" : "Spring for GraphQL",
+    "group" : "Web",
+    "description" : "Build GraphQL applications with Spring for GraphQL and GraphQL Java.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-graphql.html"
+  }, {
+    "id" : "data-rest",
+    "name" : "Rest Repositories",
+    "group" : "Web",
+    "description" : "Exposing Spring Data repositories over REST via Spring Data REST.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/how-to/data-access.html#howto.data-access.exposing-spring-data-repositories-as-rest"
+  }, {
+    "id" : "session-data-mongodb",
+    "name" : "Spring Session for Spring Data MongoDB",
+    "group" : "Web",
+    "description" : "Provides an API and a Spring Data MongoDB implementation for managing user session information.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://docs.spring.io/spring-session/reference/"
+  }, {
+    "id" : "session-data-redis",
+    "name" : "Spring Session for Spring Data Redis",
+    "group" : "Web",
+    "description" : "Provides an API and a Spring Data Redis implementation for managing user session information.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-session/reference/"
+  }, {
+    "id" : "session-hazelcast",
+    "name" : "Spring Session for Hazelcast",
+    "group" : "Web",
+    "description" : "Provides an API and a Hazelcast implementation for managing user session information.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://docs.spring.io/spring-session/reference/"
+  }, {
+    "id" : "session-jdbc",
+    "name" : "Spring Session for JDBC",
+    "group" : "Web",
+    "description" : "Provides an API and a JDBC implementation for managing user session information.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-session/reference/"
+  }, {
+    "id" : "data-rest-explorer",
+    "name" : "Rest Repositories HAL Explorer",
+    "group" : "Web",
+    "description" : "Browsing Spring Data REST repositories in your browser.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "hateoas",
+    "name" : "Spring HATEOAS",
+    "group" : "Web",
+    "description" : "Eases the creation of RESTful APIs that follow the HATEOAS principle when working with Spring / Spring MVC.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-hateoas.html"
+  }, {
+    "id" : "web-services",
+    "name" : "Spring Web Services",
+    "group" : "Web",
+    "description" : "Facilitates contract-first SOAP development using Spring WS. Allows for the creation of flexible web services using one of the many ways to manipulate XML payloads.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/webservices.html"
+  }, {
+    "id" : "jersey",
+    "name" : "Jersey",
+    "group" : "Web",
+    "description" : "Framework for developing RESTful Web Services in Java that provides support for JAX-RS APIs.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/servlet.html#web.servlet.jersey"
+  }, {
+    "id" : "vaadin",
+    "name" : "Vaadin",
+    "group" : "Web",
+    "description" : "The full-stack web app platform for Spring. Build views fully in Java with Flow, or in React using Hilla.",
+    "versionRange" : "[4.1.0,4.2.0-M1)",
+    "docs" : "https://vaadin.com/docs"
+  }, {
+    "id" : "netflix-dgs",
+    "name" : "Netflix DGS",
+    "group" : "Web",
+    "description" : "Build GraphQL applications with Netflix DGS and Spring for GraphQL.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://netflix.github.io/dgs/"
+  }, {
+    "id" : "htmx",
+    "name" : "htmx",
+    "group" : "Web",
+    "description" : "Build modern user interfaces with the simplicity and power of hypertext.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://github.com/wimdeblauwe/htmx-spring-boot"
+  }, {
+    "id" : "springdoc-openapi",
+    "name" : "SpringDoc OpenAPI",
+    "group" : "Web",
+    "description" : "Add OpenAPI / Swagger documentation to web-based Spring applications.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://springdoc.org/"
+  }, {
+    "id" : "thymeleaf",
+    "name" : "Thymeleaf",
+    "group" : "Template Engines",
+    "description" : "A modern server-side Java template engine for both web and standalone environments. Allows HTML to be correctly displayed in browsers and as static prototypes.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/servlet.html#web.servlet.spring-mvc.template-engines"
+  }, {
+    "id" : "freemarker",
+    "name" : "Apache Freemarker",
+    "group" : "Template Engines",
+    "description" : "Java library to generate text output (HTML web pages, e-mails, configuration files, source code, etc.) based on templates and changing data.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/servlet.html#web.servlet.spring-mvc.template-engines"
+  }, {
+    "id" : "mustache",
+    "name" : "Mustache",
+    "group" : "Template Engines",
+    "description" : "Logic-less templates for both web and standalone environments. There are no if statements, else clauses, or for loops. Instead there are only tags.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/servlet.html#web.servlet.spring-mvc.template-engines"
+  }, {
+    "id" : "groovy-templates",
+    "name" : "Groovy Templates",
+    "group" : "Template Engines",
+    "description" : "Groovy templating engine.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/servlet.html#web.servlet.spring-mvc.template-engines"
+  }, {
+    "id" : "jte",
+    "name" : "jte",
+    "group" : "Template Engines",
+    "description" : "Secure and lightweight template engine for Java and Kotlin.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://jte.gg/"
+  }, {
+    "id" : "security",
+    "name" : "Spring Security",
+    "group" : "Security",
+    "description" : "Highly customizable authentication and access-control framework for Spring applications.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-security.html"
+  }, {
+    "id" : "oauth2-client",
+    "name" : "OAuth2 Client",
+    "group" : "Security",
+    "description" : "Spring Boot integration for Spring Security's OAuth2/OpenID Connect client features.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-security.html#web.security.oauth2.client"
+  }, {
+    "id" : "oauth2-authorization-server",
+    "name" : "OAuth2 Authorization Server",
+    "group" : "Security",
+    "description" : "Spring Boot integration for Spring Authorization Server.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-security.html#web.security.oauth2.authorization-server"
+  }, {
+    "id" : "oauth2-resource-server",
+    "name" : "OAuth2 Resource Server",
+    "group" : "Security",
+    "description" : "Spring Boot integration for Spring Security's OAuth2 resource server features.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-security.html#web.security.oauth2.server"
+  }, {
+    "id" : "security-saml2",
+    "name" : "SAML 2.0",
+    "group" : "Security",
+    "description" : "Spring Boot integration for Spring Security's SAML 2.0 features.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/web/spring-security.html#web.security.saml2"
+  }, {
+    "id" : "spring-security-webauthn",
+    "name" : "WebAuthn for Spring Security",
+    "group" : "Security",
+    "description" : "Support for WebAuthn in Spring Security.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-security/reference/servlet/authentication/passkeys.html"
+  }, {
+    "id" : "ldap",
+    "name" : "LDAP",
+    "group" : "Security",
+    "description" : "LDAP is an open, vendor-neutral, industry standard application protocol for accessing and maintaining distributed directory information services over an IP network.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.ldap"
+  }, {
+    "id" : "data-ldap",
+    "name" : "Spring Data LDAP",
+    "group" : "Security",
+    "description" : "Spring Data support for LDAP.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.ldap"
+  }, {
+    "id" : "okta",
+    "name" : "Okta",
+    "group" : "Security",
+    "description" : "Okta specific configuration for Spring Security/Spring Boot OAuth2 features. Enable your Spring Boot application to work with Okta via OAuth 2.0/OIDC.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://github.com/okta/okta-spring-boot#readme"
+  }, {
+    "id" : "jdbc",
+    "name" : "JDBC API",
+    "group" : "SQL",
+    "description" : "Database Connectivity API that defines how a client may connect and query a database.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/sql.html"
+  }, {
+    "id" : "r2dbc",
+    "name" : "R2DBC API",
+    "group" : "SQL",
+    "description" : "Reactive Database Connectivity API that defines how a client may connect and query a database.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/sql.html#data.sql.r2dbc"
+  }, {
+    "id" : "data-jpa",
+    "name" : "Spring Data JPA",
+    "group" : "SQL",
+    "description" : "Persist data in SQL stores with Java Persistence API using Spring Data and Hibernate.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/sql.html#data.sql.jpa-and-spring-data"
+  }, {
+    "id" : "data-jdbc",
+    "name" : "Spring Data JDBC",
+    "group" : "SQL",
+    "description" : "Persist data in SQL stores with plain JDBC using Spring Data.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/sql.html#data.sql.jdbc"
+  }, {
+    "id" : "data-r2dbc",
+    "name" : "Spring Data R2DBC",
+    "group" : "SQL",
+    "description" : "Provides Reactive Relational Database Connectivity to persist data in SQL stores using Spring Data in reactive applications.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/sql.html#data.sql.r2dbc"
+  }, {
+    "id" : "mybatis",
+    "name" : "MyBatis Framework",
+    "group" : "SQL",
+    "description" : "Persistence framework with support for custom SQL, stored procedures and advanced mappings. MyBatis couples objects with stored procedures or SQL statements using a XML descriptor or annotations.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/"
+  }, {
+    "id" : "liquibase",
+    "name" : "Liquibase Migration",
+    "group" : "SQL",
+    "description" : "Liquibase database migration and source control library.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/how-to/data-initialization.html#howto.data-initialization.migration-tool.liquibase"
+  }, {
+    "id" : "flyway",
+    "name" : "Flyway Migration",
+    "group" : "SQL",
+    "description" : "Version control for your database so you can migrate from any version (incl. an empty database) to the latest version of the schema.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/how-to/data-initialization.html#howto.data-initialization.migration-tool.flyway"
+  }, {
+    "id" : "jooq",
+    "name" : "JOOQ Access Layer",
+    "group" : "SQL",
+    "description" : "Generate Java code from your database and build type safe SQL queries through a fluent API.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/sql.html#data.sql.jooq"
+  }, {
+    "id" : "db2",
+    "name" : "IBM DB2 Driver",
+    "group" : "SQL",
+    "description" : "A JDBC driver that provides access to IBM DB2.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "derby",
+    "name" : "Apache Derby Database",
+    "group" : "SQL",
+    "description" : "An open source relational database implemented entirely in Java.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "h2",
+    "name" : "H2 Database",
+    "group" : "SQL",
+    "description" : "Provides a fast in-memory database that supports JDBC API and R2DBC access, with a small (2mb) footprint. Supports embedded and server modes as well as a browser based console application.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "hsql",
+    "name" : "HyperSQL Database",
+    "group" : "SQL",
+    "description" : "Lightweight 100% Java SQL Database Engine.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "mariadb",
+    "name" : "MariaDB Driver",
+    "group" : "SQL",
+    "description" : "MariaDB JDBC and R2DBC driver.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "sqlserver",
+    "name" : "MS SQL Server Driver",
+    "group" : "SQL",
+    "description" : "A JDBC and R2DBC driver that provides access to Microsoft SQL Server and Azure SQL Database from any Java application.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "mysql",
+    "name" : "MySQL Driver",
+    "group" : "SQL",
+    "description" : "MySQL JDBC driver.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "oracle",
+    "name" : "Oracle Driver",
+    "group" : "SQL",
+    "description" : "A JDBC driver that provides access to Oracle.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "postgresql",
+    "name" : "PostgreSQL Driver",
+    "group" : "SQL",
+    "description" : "A JDBC and R2DBC driver that allows Java programs to connect to a PostgreSQL database using standard, database independent Java code.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "sqlite",
+    "name" : "SQLite Driver",
+    "group" : "SQL",
+    "description" : "JDBC driver for SQLite, a lightweight, embedded SQL database engine.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "data-redis",
+    "name" : "Spring Data Redis (Access+Driver)",
+    "group" : "NoSQL",
+    "description" : "Advanced and thread-safe Java Redis client for synchronous, asynchronous, and reactive usage. Supports Cluster, Sentinel, Pipelining, Auto-Reconnect, Codecs and much more.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.redis"
+  }, {
+    "id" : "data-redis-reactive",
+    "name" : "Spring Data Reactive Redis",
+    "group" : "NoSQL",
+    "description" : "Access Redis key-value data stores in a reactive fashion with Spring Data Redis.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.redis"
+  }, {
+    "id" : "mongodb",
+    "name" : "MongoDB",
+    "group" : "NoSQL",
+    "description" : "MongoDB is an open-source NoSQL document database that uses a JSON-like schema instead of traditional table-based relational data.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.mongodb"
+  }, {
+    "id" : "data-mongodb",
+    "name" : "Spring Data MongoDB",
+    "group" : "NoSQL",
+    "description" : "Spring Data support for MongoDB.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.mongodb"
+  }, {
+    "id" : "data-mongodb-reactive",
+    "name" : "Spring Data Reactive MongoDB",
+    "group" : "NoSQL",
+    "description" : "Reactive Spring Data support for MongoDB.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.mongodb"
+  }, {
+    "id" : "elasticsearch",
+    "name" : "Elasticsearch",
+    "group" : "NoSQL",
+    "description" : "Elasticsearch is an open source, distributed, RESTful search and analytics engine.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.elasticsearch"
+  }, {
+    "id" : "data-elasticsearch",
+    "name" : "Spring Data Elasticsearch",
+    "group" : "NoSQL",
+    "description" : "Spring Data support for Elasticsearch.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.elasticsearch"
+  }, {
+    "id" : "cassandra",
+    "name" : "Cassandra",
+    "group" : "NoSQL",
+    "description" : "Cassandra is an open source, distributed database management system designed to handle large amounts of data across many commodity servers.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.cassandra"
+  }, {
+    "id" : "data-cassandra",
+    "name" : "Spring Data for Apache Cassandra",
+    "group" : "NoSQL",
+    "description" : "Spring Data support for Cassandra.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.cassandra"
+  }, {
+    "id" : "data-cassandra-reactive",
+    "name" : "Spring Data Reactive for Apache Cassandra",
+    "group" : "NoSQL",
+    "description" : "Reactive Spring Data support for Cassandra.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.cassandra"
+  }, {
+    "id" : "couchbase",
+    "name" : "Couchbase",
+    "group" : "NoSQL",
+    "description" : "Couchbase is an open-source, distributed, multi-model NoSQL document-oriented database that is optimized for interactive applications.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.couchbase"
+  }, {
+    "id" : "data-couchbase",
+    "name" : "Spring Data Couchbase",
+    "group" : "NoSQL",
+    "description" : "Spring Data support for Couchbase.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.couchbase"
+  }, {
+    "id" : "data-couchbase-reactive",
+    "name" : "Spring Data Reactive Couchbase",
+    "group" : "NoSQL",
+    "description" : "Reactive Spring Data support for Couchbase.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.couchbase"
+  }, {
+    "id" : "neo4j",
+    "name" : "Neo4j",
+    "group" : "NoSQL",
+    "description" : "Neo4j is an open-source NoSQL graph database that uses a rich data model of nodes connected by first class relationships, which is better suited for connected big data than traditional RDBMS approaches.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.neo4j"
+  }, {
+    "id" : "data-neo4j",
+    "name" : "Spring Data Neo4j",
+    "group" : "NoSQL",
+    "description" : "Spring Data support for Neo4j.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.neo4j"
+  }, {
+    "id" : "integration",
+    "name" : "Spring Integration",
+    "group" : "Messaging",
+    "description" : "Adds support for Enterprise Integration Patterns. Enables lightweight messaging and supports integration with external systems via declarative adapters.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/spring-integration.html"
+  }, {
+    "id" : "rabbitmq",
+    "name" : "Spring for RabbitMQ",
+    "group" : "Messaging",
+    "description" : "Gives your applications a common platform to send and receive messages, and your messages a safe place to live until received.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/amqp.html"
+  }, {
+    "id" : "rabbitmq-streams",
+    "name" : "Spring for RabbitMQ Streams",
+    "group" : "Messaging",
+    "description" : "Building stream processing applications with RabbitMQ.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-amqp/reference/stream.html"
+  }, {
+    "id" : "kafka",
+    "name" : "Spring for Apache Kafka",
+    "group" : "Messaging",
+    "description" : "Publish, subscribe, store, and process streams of records.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/kafka.html"
+  }, {
+    "id" : "kafka-streams",
+    "name" : "Spring for Apache Kafka Streams",
+    "group" : "Messaging",
+    "description" : "Building stream processing applications with Apache Kafka Streams.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-kafka/reference/streams.html"
+  }, {
+    "id" : "activemq",
+    "name" : "Spring for Apache ActiveMQ 5",
+    "group" : "Messaging",
+    "description" : "Spring JMS support with Apache ActiveMQ 'Classic'.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/jms.html#messaging.jms.activemq"
+  }, {
+    "id" : "artemis",
+    "name" : "Spring for Apache ActiveMQ Artemis",
+    "group" : "Messaging",
+    "description" : "Spring JMS support with Apache ActiveMQ Artemis.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/jms.html#messaging.jms.artemis"
+  }, {
+    "id" : "pulsar",
+    "name" : "Spring for Apache Pulsar",
+    "group" : "Messaging",
+    "description" : "Build messaging applications with Apache Pulsar",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/pulsar.html"
+  }, {
+    "id" : "websocket",
+    "name" : "WebSocket",
+    "group" : "Messaging",
+    "description" : "Build Servlet-based WebSocket applications with SockJS and STOMP.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/messaging/websockets.html"
+  }, {
+    "id" : "rsocket",
+    "name" : "RSocket",
+    "group" : "Messaging",
+    "description" : "RSocket.io applications with Spring Messaging and Netty.",
+    "versionRange" : "",
+    "docs" : "https://rsocket.io/"
+  }, {
+    "id" : "camel",
+    "name" : "Apache Camel",
+    "group" : "Messaging",
+    "description" : "Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : ""
+  }, {
+    "id" : "solace",
+    "name" : "Solace PubSub+",
+    "group" : "Messaging",
+    "description" : "Connect to a Solace PubSub+ Advanced Event Broker to publish, subscribe, request/reply and store/replay messages",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://www.solace.dev/start-spring-io-help/"
+  }, {
+    "id" : "batch",
+    "name" : "Spring Batch",
+    "group" : "I/O",
+    "description" : "Batch applications with transactions, retry/skip and chunk based processing.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/how-to/batch.html"
+  }, {
+    "id" : "batch-jdbc",
+    "name" : "Spring Batch JDBC",
+    "group" : "I/O",
+    "description" : "JDBC support for Spring Batch applications.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/how-to/batch.html"
+  }, {
+    "id" : "batch-data-mongodb",
+    "name" : "Spring Batch MongoDB",
+    "group" : "I/O",
+    "description" : "MongoDB support for Spring Batch applications.",
+    "versionRange" : "4.1.0-M3",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/how-to/batch.html"
+  }, {
+    "id" : "hazelcast",
+    "name" : "Hazelcast",
+    "group" : "I/O",
+    "description" : "Hazelcast is a distributed cache with in-memory compute and stream processing that accelerates applications with data caching, data integration, and distributed computing.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/hazelcast.html"
+  }, {
+    "id" : "validation",
+    "name" : "Validation",
+    "group" : "I/O",
+    "description" : "Bean Validation with Hibernate validator.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/validation.html"
+  }, {
+    "id" : "mail",
+    "name" : "Java Mail Sender",
+    "group" : "I/O",
+    "description" : "Send email using Java Mail and Spring Framework's JavaMailSender.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/email.html"
+  }, {
+    "id" : "quartz",
+    "name" : "Quartz Scheduler",
+    "group" : "I/O",
+    "description" : "Schedule jobs using Quartz.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/quartz.html"
+  }, {
+    "id" : "jobrunr",
+    "name" : "JobRunr",
+    "group" : "I/O",
+    "description" : "Easily schedule and process background jobs using a distributed job scheduler with a built-in dashboard.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://www.jobrunr.io/en/documentation/configuration/spring/"
+  }, {
+    "id" : "cache",
+    "name" : "Spring Cache Abstraction",
+    "group" : "I/O",
+    "description" : "Provides cache-related operations, such as the ability to update the content of the cache, but does not provide the actual data store.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/io/caching.html"
+  }, {
+    "id" : "spring-shell",
+    "name" : "Spring Shell",
+    "group" : "I/O",
+    "description" : "Build command line applications with spring.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://docs.spring.io/spring-shell/reference/index.html"
+  }, {
+    "id" : "spring-grpc-server",
+    "name" : "Spring gRPC Server",
+    "group" : "I/O",
+    "description" : "Server support for gRPC, a high performance, open source universal RPC framework.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-grpc/reference/server.html"
+  }, {
+    "id" : "spring-grpc-client",
+    "name" : "Spring gRPC Client",
+    "group" : "I/O",
+    "description" : "Client support for gRPC, a high performance, open source universal RPC framework.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-grpc/reference/client.html"
+  }, {
+    "id" : "actuator",
+    "name" : "Spring Boot Actuator",
+    "group" : "Ops",
+    "description" : "Supports built in (or custom) endpoints that let you monitor and manage your application - such as application health, metrics, sessions, etc.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/index.html"
+  }, {
+    "id" : "sbom-cyclone-dx",
+    "name" : "CycloneDX SBOM support",
+    "group" : "Ops",
+    "description" : "Creates a Software Bill of Materials in CycloneDX format.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/endpoints.html#actuator.endpoints.sbom"
+  }, {
+    "id" : "codecentric-spring-boot-admin-client",
+    "name" : "codecentric's Spring Boot Admin (Client)",
+    "group" : "Ops",
+    "description" : "Required for your application to register with a Codecentric's Spring Boot Admin Server instance.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://codecentric.github.io/spring-boot-admin/current/#getting-started"
+  }, {
+    "id" : "codecentric-spring-boot-admin-server",
+    "name" : "codecentric's Spring Boot Admin (Server)",
+    "group" : "Ops",
+    "description" : "A community project to manage and monitor your Spring Boot applications. Provides a UI on top of the Spring Boot Actuator endpoints.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://codecentric.github.io/spring-boot-admin/current/#getting-started"
+  }, {
+    "id" : "sentry",
+    "name" : "Sentry",
+    "group" : "Ops",
+    "description" : "Application performance monitoring and error tracking that help software teams see clearer, solve quicker, and learn continuously.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://docs.sentry.io/platforms/java/"
+  }, {
+    "id" : "cloudfoundry",
+    "name" : "Cloud Foundry",
+    "group" : "Ops",
+    "description" : "Cloud Foundry provides a highly efficient, open source platform for cloud-native application development.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/cloud-foundry.html"
+  }, {
+    "id" : "datadog",
+    "name" : "Datadog",
+    "group" : "Observability",
+    "description" : "Publish Micrometer metrics to Datadog, a dimensional time-series SaaS with built-in dashboarding and alerting.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.datadog"
+  }, {
+    "id" : "dynatrace",
+    "name" : "Dynatrace",
+    "group" : "Observability",
+    "description" : "Publish Micrometer metrics to Dynatrace, a platform featuring observability, AIOps, application security and analytics.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.dynatrace"
+  }, {
+    "id" : "influx",
+    "name" : "Influx",
+    "group" : "Observability",
+    "description" : "Publish Micrometer metrics to InfluxDB, a dimensional time-series server that support real-time stream processing of data.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.influx"
+  }, {
+    "id" : "graphite",
+    "name" : "Graphite",
+    "group" : "Observability",
+    "description" : "Publish Micrometer metrics to Graphite, a hierarchical metrics system backed by a fixed-size database.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.graphite"
+  }, {
+    "id" : "new-relic",
+    "name" : "New Relic",
+    "group" : "Observability",
+    "description" : "Publish Micrometer metrics to New Relic, a SaaS offering with a full UI and a query language called NRQL.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.newrelic"
+  }, {
+    "id" : "otlp-metrics",
+    "name" : "OTLP for metrics",
+    "group" : "Observability",
+    "description" : "Publish Micrometer metrics to an OpenTelemetry Protocol (OTLP) capable backend.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.otlp"
+  }, {
+    "id" : "prometheus",
+    "name" : "Prometheus",
+    "group" : "Observability",
+    "description" : "Expose Micrometer metrics in Prometheus format, an in-memory dimensional time series database with a simple built-in UI, a custom query language, and math operations.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/metrics.html#actuator.metrics.export.prometheus"
+  }, {
+    "id" : "datasource-micrometer",
+    "name" : "Datasource Micrometer",
+    "group" : "Observability",
+    "description" : "Add Micrometer observability instrumentation for JDBC operations.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : ""
+  }, {
+    "id" : "distributed-tracing",
+    "name" : "Distributed Tracing",
+    "group" : "Observability",
+    "description" : "Enable span and trace IDs in logs.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "opentelemetry",
+    "name" : "OpenTelemetry",
+    "group" : "Observability",
+    "description" : "Publish metrics and traces in OpenTelemetry's OTLP format.",
+    "versionRange" : "4.0.0",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/actuator/observability.html#actuator.observability.opentelemetry"
+  }, {
+    "id" : "zipkin",
+    "name" : "Zipkin",
+    "group" : "Observability",
+    "description" : "Enable and expose span and trace IDs to Zipkin.",
+    "versionRange" : "",
+    "docs" : ""
+  }, {
+    "id" : "restdocs",
+    "name" : "Spring REST Docs",
+    "group" : "Testing",
+    "description" : "Document RESTful services by combining hand-written with Asciidoctor and auto-generated snippets produced with Spring MVC Test.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/"
+  }, {
+    "id" : "testcontainers",
+    "name" : "Testcontainers",
+    "group" : "Testing",
+    "description" : "Provide lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.",
+    "versionRange" : "",
+    "docs" : "https://java.testcontainers.org/"
+  }, {
+    "id" : "unboundid-ldap",
+    "name" : "Embedded LDAP Server",
+    "group" : "Testing",
+    "description" : "Provides a platform neutral way for running a LDAP server in unit tests.",
+    "versionRange" : "",
+    "docs" : "https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.ldap.embedded"
+  }, {
+    "id" : "cloud-starter",
+    "name" : "Cloud Bootstrap",
+    "group" : "Spring Cloud",
+    "description" : "Non-specific Spring Cloud features, unrelated to external libraries or integrations (e.g. Bootstrap context and @RefreshScope).",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/application-context-services.html"
+  }, {
+    "id" : "cloud-function",
+    "name" : "Function",
+    "group" : "Spring Cloud",
+    "description" : "Promotes the implementation of business logic via functions and supports a uniform programming model across serverless providers, as well as the ability to run standalone (locally or in a PaaS).",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-function/reference/"
+  }, {
+    "id" : "cloud-task",
+    "name" : "Task",
+    "group" : "Spring Cloud",
+    "description" : "Allows a user to develop and run short lived microservices using Spring Cloud. Run them locally, in the cloud, and on Spring Cloud Data Flow.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-task/reference/"
+  }, {
+    "id" : "cloud-config-client",
+    "name" : "Config Client",
+    "group" : "Spring Cloud Config",
+    "description" : "Client that connects to a Spring Cloud Config Server to fetch the application's configuration.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-config/reference/client.html"
+  }, {
+    "id" : "cloud-config-server",
+    "name" : "Config Server",
+    "group" : "Spring Cloud Config",
+    "description" : "Central management for configuration via Git, SVN, or HashiCorp Vault.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-config/reference/server.html"
+  }, {
+    "id" : "cloud-starter-vault-config",
+    "name" : "Vault Configuration",
+    "group" : "Spring Cloud Config",
+    "description" : "Provides client-side support for externalized configuration in a distributed system. Using HashiCorp's Vault you have a central place to manage external secret properties for applications across all environments.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-vault/reference/"
+  }, {
+    "id" : "cloud-starter-zookeeper-config",
+    "name" : "Apache Zookeeper Configuration",
+    "group" : "Spring Cloud Config",
+    "description" : "Enable and configure common patterns inside your application and build large distributed systems with Apache Zookeeper based components. The provided patterns include Service Discovery and Configuration.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-zookeeper/reference/config.html"
+  }, {
+    "id" : "cloud-starter-consul-config",
+    "name" : "Consul Configuration",
+    "group" : "Spring Cloud Config",
+    "description" : "Enable and configure the common patterns inside your application and build large distributed systems with Hashicorp’s Consul. The patterns provided include Service Discovery, Distributed Configuration and Control Bus.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-consul/reference/"
+  }, {
+    "id" : "cloud-eureka",
+    "name" : "Eureka Discovery Client",
+    "group" : "Spring Cloud Discovery",
+    "description" : "A REST based service for locating services for the purpose of load balancing and failover of middle-tier servers.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-netflix/reference/spring-cloud-netflix.html#_service_discovery_eureka_clients"
+  }, {
+    "id" : "cloud-eureka-server",
+    "name" : "Eureka Server",
+    "group" : "Spring Cloud Discovery",
+    "description" : "spring-cloud-netflix Eureka Server.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-netflix/reference/spring-cloud-netflix.html#spring-cloud-eureka-server"
+  }, {
+    "id" : "cloud-starter-zookeeper-discovery",
+    "name" : "Apache Zookeeper Discovery",
+    "group" : "Spring Cloud Discovery",
+    "description" : "Service discovery with Apache Zookeeper.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-zookeeper/reference/discovery.html"
+  }, {
+    "id" : "cloud-starter-consul-discovery",
+    "name" : "Consul Discovery",
+    "group" : "Spring Cloud Discovery",
+    "description" : "Service discovery with Hashicorp Consul.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-consul/reference/discovery.html"
+  }, {
+    "id" : "cloud-gateway",
+    "name" : "Gateway",
+    "group" : "Spring Cloud Routing",
+    "description" : "Provides a simple, yet effective way to route to APIs in Servlet-based applications. Provides cross-cutting concerns to those APIs such as security, monitoring/metrics, and resiliency.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webmvc.html"
+  }, {
+    "id" : "cloud-gateway-reactive",
+    "name" : "Reactive Gateway",
+    "group" : "Spring Cloud Routing",
+    "description" : "Provides a simple, yet effective way to route to APIs in reactive applications. Provides cross-cutting concerns to those APIs such as security, monitoring/metrics, and resiliency.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux.html"
+  }, {
+    "id" : "cloud-feign",
+    "name" : "OpenFeign",
+    "group" : "Spring Cloud Routing",
+    "description" : "Declarative REST Client. OpenFeign creates a dynamic implementation of an interface decorated with JAX-RS or Spring MVC annotations.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-openfeign/reference/"
+  }, {
+    "id" : "cloud-loadbalancer",
+    "name" : "Cloud LoadBalancer",
+    "group" : "Spring Cloud Routing",
+    "description" : "Client-side load-balancing with Spring Cloud LoadBalancer.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/loadbalancer.html"
+  }, {
+    "id" : "cloud-resilience4j",
+    "name" : "Resilience4J",
+    "group" : "Spring Cloud Circuit Breaker",
+    "description" : "Spring Cloud Circuit breaker with Resilience4j as the underlying implementation.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-circuitbreaker/reference/spring-cloud-circuitbreaker-resilience4j.html"
+  }, {
+    "id" : "cloud-bus",
+    "name" : "Cloud Bus",
+    "group" : "Spring Cloud Messaging",
+    "description" : "Links nodes of a distributed system with a lightweight message broker which can used to broadcast state changes or other management instructions (requires a binder, e.g. Apache Kafka or RabbitMQ).",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-bus/reference/"
+  }, {
+    "id" : "cloud-stream",
+    "name" : "Cloud Stream",
+    "group" : "Spring Cloud Messaging",
+    "description" : "Framework for building highly scalable event-driven microservices connected with shared messaging systems (requires a binder, e.g. Apache Kafka, Apache Pulsar, RabbitMQ, or Solace PubSub+).",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-cloud-stream/reference/"
+  }, {
+    "id" : "scs-config-client",
+    "name" : "Config Client (TAS)",
+    "group" : "VMware Tanzu Application Service",
+    "description" : "Config client on VMware Tanzu Application Service.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://docs.vmware.com/en/Spring-Cloud-Services-for-VMware-Tanzu/index.html"
+  }, {
+    "id" : "scs-service-registry",
+    "name" : "Service Registry (TAS)",
+    "group" : "VMware Tanzu Application Service",
+    "description" : "Eureka service discovery client on VMware Tanzu Application Service.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://docs.vmware.com/en/Spring-Cloud-Services-for-VMware-Tanzu/index.html"
+  }, {
+    "id" : "tanzu-governance-starter",
+    "name" : "Governance Starter [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "The Enterprise Spring Boot Governance Starter library enforces cipher and TLS security based on the industry standard, and empowers Spring developers to auto-generate compliance and governance reporting information for their applications.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/tanzu-spring/commercial/spring-tanzu/index-sbgs.html"
+  }, {
+    "id" : "tanzu-scg-access-control",
+    "name" : "Spring Cloud Gateway Access Control [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "Spring Cloud Gateway filters for access control based on API keys or JWT Tokens.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/access-control.html"
+  }, {
+    "id" : "tanzu-scg-custom",
+    "name" : "Spring Cloud Gateway Custom [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "Spring Cloud Gateway utilities to help develop custom filters and predicates.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/custom.html"
+  }, {
+    "id" : "tanzu-scg-graphql",
+    "name" : "Spring Cloud Gateway GraphQL [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "Spring Cloud Gateway filters to restrict GraphQL operations.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/graphql.html"
+  }, {
+    "id" : "tanzu-scg-sso",
+    "name" : "Spring Cloud Gateway Single Sign On [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "Spring Cloud Gateway filters to add single sign-on (SSO) and restrict traffic based on roles or scopes.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/sso.html"
+  }, {
+    "id" : "tanzu-scg-traffic-control",
+    "name" : "Spring Cloud Gateway Traffic Control [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "Spring Cloud Gateway filters to restrict traffic based on request parameters and add circuit breakers.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/traffic-control.html"
+  }, {
+    "id" : "tanzu-scg-transformation",
+    "name" : "Spring Cloud Gateway Transformation [Enterprise]",
+    "group" : "VMware Tanzu Spring Enterprise Extensions",
+    "description" : "Spring Cloud Gateway filters to transform the response before returning downstream.",
+    "versionRange" : "[3.5.0,4.0.0)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/transformation.html"
+  }, {
+    "id" : "tanzu-spring-sdk",
+    "name" : "Tanzu Spring SDK [Enterprise]",
+    "group" : "VMware Tanzu Spring SDK",
+    "description" : "The Tanzu Spring SDK is a Spring Boot BOM with optional libraries for exposing observability and using OpenFeature based feature flags in Tanzu Platform.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/tanzu-spring/commercial/spring-tanzu/tanzu-spring-sdk-getting-started.html"
+  }, {
+    "id" : "azure-support",
+    "name" : "Azure Support",
+    "group" : "Microsoft Azure",
+    "description" : "Auto-configuration for Azure Services (Service Bus, Storage, Active Directory, Key Vault, and more).",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://aka.ms/spring/msdocs/developer-guide"
+  }, {
+    "id" : "azure-active-directory",
+    "name" : "Azure Active Directory",
+    "group" : "Microsoft Azure",
+    "description" : "Spring Security integration with Azure Active Directory for authentication.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#spring-security-with-azure-active-directory"
+  }, {
+    "id" : "azure-cosmos-db",
+    "name" : "Azure Cosmos DB",
+    "group" : "Microsoft Azure",
+    "description" : "Fully managed NoSQL database service for modern app development, including Spring Data support.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#spring-data-support"
+  }, {
+    "id" : "azure-keyvault",
+    "name" : "Azure Key Vault",
+    "group" : "Microsoft Azure",
+    "description" : "All key vault features are supported, e.g. manage application secrets and certificates.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#secret-management"
+  }, {
+    "id" : "azure-storage",
+    "name" : "Azure Storage",
+    "group" : "Microsoft Azure",
+    "description" : "All Storage features are supported, e.g. blob, fileshare and queue.",
+    "versionRange" : "[4.0.0,4.1.0-M1)",
+    "docs" : "https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#resource-handling"
+  }, {
+    "id" : "cloud-gcp",
+    "name" : "Google Cloud Support",
+    "group" : "Google Cloud",
+    "description" : "Contains auto-configuration support for every Google Cloud integration. Most of the auto-configuration code is only enabled if other dependencies are added to the classpath.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://googlecloudplatform.github.io/spring-cloud-gcp/reference/html/index.html"
+  }, {
+    "id" : "cloud-gcp-pubsub",
+    "name" : "Google Cloud Messaging",
+    "group" : "Google Cloud",
+    "description" : "Adds the Google Cloud Support entry and all the required dependencies so that the Google Cloud Pub/Sub integration work out of the box.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://googlecloudplatform.github.io/spring-cloud-gcp/reference/html/index.html#cloud-pubsub"
+  }, {
+    "id" : "cloud-gcp-storage",
+    "name" : "Google Cloud Storage",
+    "group" : "Google Cloud",
+    "description" : "Adds the Google Cloud Support entry and all the required dependencies so that the Google Cloud Storage integration work out of the box.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://googlecloudplatform.github.io/spring-cloud-gcp/reference/html/index.html#cloud-storage"
+  }, {
+    "id" : "spring-ai-anthropic",
+    "name" : "Anthropic Claude",
+    "group" : "AI",
+    "description" : "Spring AI support for Anthropic Claude AI models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html"
+  }, {
+    "id" : "spring-ai-vectordb-azure",
+    "name" : "Azure AI Search",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Azure AI Search. It is an AI-powered information retrieval platform and part of Microsoft’s larger AI platform. Among other features, it allows users to query information using vector-based storage and retrieval.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/azure.html"
+  }, {
+    "id" : "spring-ai-bedrock",
+    "name" : "Amazon Bedrock",
+    "group" : "AI",
+    "description" : "Spring AI support for Amazon Bedrock Cohere and Titan Embedding Models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/bedrock-chat.html"
+  }, {
+    "id" : "spring-ai-bedrock-converse",
+    "name" : "Amazon Bedrock Converse",
+    "group" : "AI",
+    "description" : "Spring AI support for Amazon Bedrock Converse. It provides a unified interface for conversational AI models with enhanced capabilities including function/tool calling, multimodal inputs, and streaming responses.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/bedrock-converse.html"
+  }, {
+    "id" : "spring-ai-vectordb-bedrock-knowledgebase",
+    "name" : "Amazon Bedrock Knowledge Base",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Amazon Bedrock Knowledge Base. It provides fully managed Retrieval-Augmented Generation (RAG) capabilities with enterprise-grade security and privacy.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/bedrock-knowledgebase.html"
+  }, {
+    "id" : "spring-ai-deepseek",
+    "name" : "DeepSeek",
+    "group" : "AI",
+    "description" : "Spring AI support for DeepSeek AI models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat/deepseek-chat.html"
+  }, {
+    "id" : "spring-ai-elevenlabs",
+    "name" : "ElevenLabs",
+    "group" : "AI",
+    "description" : "Spring AI support for ElevenLabs text-to-speech models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/speech/elevenlabs-speech.html"
+  }, {
+    "id" : "spring-ai-google-genai",
+    "name" : "Google GenAI",
+    "group" : "AI",
+    "description" : "Spring AI support for Google GenAI (Gemini) models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat/google-genai-chat.html"
+  }, {
+    "id" : "spring-ai-google-genai-embedding",
+    "name" : "Google GenAI Embeddings",
+    "group" : "AI",
+    "description" : "Spring AI support for Google GenAI embedding models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/embeddings/google-genai-embeddings.html"
+  }, {
+    "id" : "spring-ai-vectordb-cassandra",
+    "name" : "Apache Cassandra Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Apache Cassandra.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/apache-cassandra.html"
+  }, {
+    "id" : "spring-ai-vectordb-chroma",
+    "name" : "Chroma Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Chroma. It is an open-source embedding database and gives you the tools to store document embeddings, content, and metadata. It also allows to search through those embeddings, including metadata filtering.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/chroma.html"
+  }, {
+    "id" : "spring-ai-vectordb-couchbase",
+    "name" : "Couchbase Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Couchbase.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/couchbase.html"
+  }, {
+    "id" : "spring-ai-vectordb-elasticsearch",
+    "name" : "Elasticsearch Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Elasticsearch.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/elasticsearch.html"
+  }, {
+    "id" : "spring-ai-vectordb-gemfire",
+    "name" : "GemFire Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for GemFire.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/gemfire.html"
+  }, {
+    "id" : "spring-ai-mcp-server",
+    "name" : "Model Context Protocol Server",
+    "group" : "AI",
+    "description" : "Spring AI support for Model Context Protocol (MCP) servers.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html"
+  }, {
+    "id" : "spring-ai-mcp-client",
+    "name" : "Model Context Protocol Client",
+    "group" : "AI",
+    "description" : "Spring AI support for Model Context Protocol (MCP) clients.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/mcp/mcp-client-boot-starter-docs.html"
+  }, {
+    "id" : "spring-ai-tool-search-advisor",
+    "name" : "Tool Search Advisor",
+    "group" : "AI",
+    "description" : "Spring AI Starter for the Tool Search Advisor, enabling dynamic tool discovery via a search index.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/tools/tool-search-tool.html"
+  }, {
+    "id" : "mcp-security",
+    "name" : "Model Context Protocol Security [Experimental]",
+    "group" : "AI",
+    "description" : "Provides security for Spring AI's MCP server and client, and for the OAuth2 Authorization Server.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://github.com/spring-ai-community/mcp-security?tab=readme-ov-file#mcp-security"
+  }, {
+    "id" : "spring-ai-vectordb-milvus",
+    "name" : "Milvus Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Milvus. It is an open-source vector database that has garnered significant attention in the fields of data science and machine learning. One of its standout features lies in its robust support for vector indexing and querying.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/milvus.html"
+  }, {
+    "id" : "spring-ai-mistral",
+    "name" : "Mistral AI",
+    "group" : "AI",
+    "description" : "Spring AI support for Mistral AI, the open and portable generative AI for devs and businesses.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat/mistralai-chat.html"
+  }, {
+    "id" : "spring-ai-vectordb-mongodb-atlas",
+    "name" : "MongoDB Atlas Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for MongoDB Atlas. Is is a fully managed cloud database service that provides an easy way to deploy, operate, and scale a MongoDB database in the cloud.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/mongodb.html"
+  }, {
+    "id" : "spring-ai-vectordb-neo4j",
+    "name" : "Neo4j Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Neo4j's Vector Search. It allows users to query vector embeddings from large datasets.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/neo4j.html"
+  }, {
+    "id" : "spring-ai-vectordb-opensearch",
+    "name" : "OpenSearch Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for OpenSearch.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/opensearch.html"
+  }, {
+    "id" : "spring-ai-vectordb-aws-opensearch",
+    "name" : "AWS OpenSearch Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for AWS OpenSearch Service.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/opensearch.html"
+  }, {
+    "id" : "spring-ai-ollama",
+    "name" : "Ollama",
+    "group" : "AI",
+    "description" : "Spring AI support for Ollama. It allows you to run various Large Language Models (LLMs) locally and generate text from them.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat/ollama-chat.html"
+  }, {
+    "id" : "spring-ai-openai",
+    "name" : "OpenAI",
+    "group" : "AI",
+    "description" : "Spring AI support for ChatGPT, the AI language model and DALL-E, the Image generation model from OpenAI.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html"
+  }, {
+    "id" : "spring-ai-chat-memory-repository-in-memory",
+    "name" : "In-memory Chat Memory Repository",
+    "group" : "AI",
+    "description" : "Spring AI support for in-memory chat memory repository.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat-memory.html"
+  }, {
+    "id" : "spring-ai-chat-memory-repository-jdbc",
+    "name" : "JDBC Chat Memory Repository",
+    "group" : "AI",
+    "description" : "Spring AI support for JDBC based chat memory.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat-memory.html"
+  }, {
+    "id" : "spring-ai-chat-memory-repository-cassandra",
+    "name" : "Cassandra Chat Memory Repository",
+    "group" : "AI",
+    "description" : "Spring AI support for Cassandra based chat memory.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat-memory.html"
+  }, {
+    "id" : "spring-ai-chat-memory-repository-mongodb",
+    "name" : "MongoDB Chat Memory Repository",
+    "group" : "AI",
+    "description" : "Spring AI support for MongoDB based chat memory.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat-memory.html"
+  }, {
+    "id" : "spring-ai-chat-memory-repository-neo4j",
+    "name" : "Neo4j Chat Memory Repository",
+    "group" : "AI",
+    "description" : "Spring AI support for Neo4j based chat memory.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat-memory.html"
+  }, {
+    "id" : "spring-ai-chat-memory-repository-redis",
+    "name" : "Redis Chat Memory Repository",
+    "group" : "AI",
+    "description" : "Spring AI support for Redis based chat memory.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/chat-memory.html"
+  }, {
+    "id" : "spring-ai-vectordb-oracle",
+    "name" : "Oracle Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Oracle. Enables storing, indexing and searching vector embeddings in Oracle Database 23ai.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/oracle.html"
+  }, {
+    "id" : "spring-ai-vectordb-pgvector",
+    "name" : "PGvector Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for PGvector. It is an open-source extension for PostgreSQL that enables storing and searching over machine learning-generated embeddings.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/pgvector.html"
+  }, {
+    "id" : "spring-ai-vectordb-pinecone",
+    "name" : "Pinecone Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Pinecone. It is a popular cloud-based vector database and allows you to store and search vectors efficiently.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/pinecone.html"
+  }, {
+    "id" : "spring-ai-postgresml",
+    "name" : "PostgresML",
+    "group" : "AI",
+    "description" : "Spring AI support for the PostgresML text embeddings models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/embeddings/postgresml-embeddings.html"
+  }, {
+    "id" : "spring-ai-vectordb-redis",
+    "name" : "Redis Search and Query Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Redis Search and Query. It extends the core features of Redis OSS and allows you to use Redis as a vector database.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/redis.html"
+  }, {
+    "id" : "spring-ai-vectordb-s3",
+    "name" : "S3 Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for AWS S3. Store and retrieve vector embeddings using Amazon S3 object storage with efficient search capabilities.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/s3.html"
+  }, {
+    "id" : "spring-ai-vectordb-mariadb",
+    "name" : "MariaDB Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI support for MariaDB. MariaDB Vector Store support is part of MariaDB 11.7. It provides efficient vector similarity search capabilities using vector indexes, supporting both cosine similarity and Euclidean distance metrics.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/mariadb.html"
+  }, {
+    "id" : "spring-ai-stabilityai",
+    "name" : "Stability AI",
+    "group" : "AI",
+    "description" : "Spring AI support for Stability AI's text to image generation model.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/image/stabilityai-image.html"
+  }, {
+    "id" : "spring-ai-transformers",
+    "name" : "Transformers (ONNX) Embeddings",
+    "group" : "AI",
+    "description" : "Spring AI support for pre-trained transformer models, serialized into the Open Neural Network Exchange (ONNX) format.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/embeddings/onnx.html"
+  }, {
+    "id" : "spring-ai-vertexai-embeddings",
+    "name" : "Vertex AI Embeddings",
+    "group" : "AI",
+    "description" : "Spring AI support for Google Vertex text and multimodal embedding models.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/embeddings/vertexai-embeddings-text.html"
+  }, {
+    "id" : "spring-ai-vectordb-qdrant",
+    "name" : "Qdrant Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Qdrant. It is an open-source, high-performance vector search engine/database.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/qdrant.html"
+  }, {
+    "id" : "spring-ai-vectordb-typesense",
+    "name" : "Typesense Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Typesense.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/typesense.html"
+  }, {
+    "id" : "spring-ai-vectordb-weaviate",
+    "name" : "Weaviate Vector Database",
+    "group" : "AI",
+    "description" : "Spring AI vector database support for Weaviate, an open-source vector database. It allows you to store data objects and vector embeddings from your favorite ML-models and scale seamlessly into billions of data objects.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/vectordbs/weaviate.html"
+  }, {
+    "id" : "spring-ai-markdown-document-reader",
+    "name" : "Markdown Document Reader",
+    "group" : "AI",
+    "description" : "Spring AI Markdown document reader. It allows to load Markdown documents, converting them into a list of Spring AI Document objects.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html#_markdown"
+  }, {
+    "id" : "spring-ai-tika-document-reader",
+    "name" : "Tika Document Reader",
+    "group" : "AI",
+    "description" : "Spring AI Tika document reader. It uses Apache Tika to extract text from a variety of document formats, such as PDF, DOC/DOCX, PPT/PPTX, and HTML. The documents are converted into a list of Spring AI Document objects.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html#_tika_docx_pptx_html"
+  }, {
+    "id" : "spring-ai-pdf-document-reader",
+    "name" : "PDF Document Reader",
+    "group" : "AI",
+    "description" : "Spring AI PDF document reader. It uses Apache PdfBox to extract text from PDF documents and converting them into a list of Spring AI Document objects.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html#_pdf_page"
+  }, {
+    "id" : "spring-ai-jsoup-document-reader",
+    "name" : "JSoup Document Reader",
+    "group" : "AI",
+    "description" : "Spring AI HTML document reader using JSoup. It parses HTML documents and converts them into a list of Spring AI Document objects.",
+    "versionRange" : "[4.0.0,4.3.0-M1)",
+    "docs" : "https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html"
+  }, {
+    "id" : "timefold-solver",
+    "name" : "Timefold Solver",
+    "group" : "AI",
+    "description" : "AI solver to optimize operations and scheduling.",
+    "versionRange" : "[4.0.0,4.2.0-M1)",
+    "docs" : "https://timefold.ai/docs/timefold-solver/latest/quickstart/spring-boot/spring-boot-quickstart#springBootJavaQuickStart"
+  } ]
+}
