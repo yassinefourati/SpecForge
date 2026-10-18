@@ -239,7 +239,7 @@ final class UseCaseBuilder {
         item.name = op.itemRecord;
         item.doc = "A " + op.child.className + " inside a request for its " + op.entity.className + "; the "
             + op.linkComponent + " is taken from the " + op.entity.className + ".";
-        for (DbField f : op.child.dtoComponents()) {
+        for (DbField f : op.child.requestComponents()) {
             if (f.name.equals(op.linkComponent)) continue;
             item.components.add(component(f.name, f.javaType, f.validations));
         }
@@ -249,7 +249,7 @@ final class UseCaseBuilder {
         DbRecord req = new DbRecord();
         req.name = op.requestRecord;
         req.doc = op.entity.className + " and its " + op.childrenProperty + ", written in one transaction.";
-        req.components.add(component(op.parentProperty, op.entity.dtoName, List.of("@Valid", "@NotNull")));
+        req.components.add(component(op.parentProperty, op.entity.requestName, List.of("@Valid", "@NotNull")));
         req.components.add(component(op.childrenProperty, "List<" + op.itemRecord + ">", List.of("@Valid", "@NotNull")));
         req.imports.add("java.util.List");
         add(uc, req);

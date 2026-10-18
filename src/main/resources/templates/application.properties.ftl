@@ -25,6 +25,14 @@ spring.jpa.database-platform=org.hibernate.community.dialect.SQLiteDialect
 spring.datasource.hikari.connection-init-sql=PRAGMA foreign_keys = ON
 </#if>
 spring.data.web.pageable.max-page-size=100
+<#if checks.flyway != "NONE">
+# ---- Flyway: the existing database is version 1 (nothing is run on it); changes go in db/migration as V2__... ----
+spring.flyway.baseline-on-migrate=true
+spring.flyway.baseline-version=1
+<#if checks.flywaySchemas?has_content>
+spring.flyway.schemas=[=checks.flywaySchemas]
+</#if>
+</#if>
 <#elseif options.proxy>
 # ---- upstream API (proxy mode: every service call is forwarded there, no database) ----
 app.upstream.base-url=${UPSTREAM_BASE_URL:[=api.upstreamUrl]}
@@ -69,7 +77,16 @@ spring.jpa.properties.hibernate.globally_quoted_identifiers=true
 
 # ---- security ----
 <#if security.usesJwt>
-<#if security.issuerUri?has_content>
+<#if source.kind == "DATABASE">
+# the authorization server that issues the tokens, e.g. a Keycloak realm: https://sso.example.com/realms/<realm>
+spring.security.oauth2.resourceserver.jwt.issuer-uri=${JWT_ISSUER_URI:http://localhost:8080/realms/app}
+<#if secCfg.keycloakRoles()>
+# Keycloak publishes its signing keys here; for another server set JWT_JWK_SET_URI
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=${JWT_JWK_SET_URI:${JWT_ISSUER_URI:http://localhost:8080/realms/app}/protocol/openid-connect/certs}
+</#if>
+# when set, tokens must name this API in "aud" (Keycloak: an audience mapper on the client)
+spring.security.oauth2.resourceserver.jwt.audiences=${JWT_AUDIENCE:}
+<#elseif security.issuerUri?has_content>
 spring.security.oauth2.resourceserver.jwt.issuer-uri=[=security.issuerUri]
 <#else>
 # TODO: point this at your authorization server's JWK set

@@ -131,6 +131,7 @@ public class Api {
         m.put("userHome", System.getProperty("user.home"));
         m.put("java", System.getProperty("java.version"));
         m.put("defaults", GeneratorConfig.defaults());
+        m.put("stylePresets", GeneratorConfig.PRESETS);
         m.put("layerKeys", GeneratorConfig.LAYER_KEYS);
         return json(m);
     }

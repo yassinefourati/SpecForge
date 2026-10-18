@@ -17,18 +17,22 @@ class GoldenFilesTest {
 
     @ParameterizedTest(name = "{0}")
     @CsvSource({
-        "petstore-default,         DATABASE, FORWARD,         ''",
-        "petstore-proxy-forward,   PROXY,    FORWARD,         ''",
-        "petstore-proxy-account,   PROXY,    SERVICE_ACCOUNT, ''",
+        "petstore-default,         DATABASE, FORWARD,         '', ''",
+        "petstore-proxy-forward,   PROXY,    FORWARD,         '', ''",
+        "petstore-proxy-account,   PROXY,    SERVICE_ACCOUNT, '', ''",
         // a profile pinned to an older Boot version must keep producing the same output (P2)
-        "petstore-boot-3.5.6,      DATABASE, FORWARD,         3.5.6",
-        "petstore-boot-3.5.6-proxy,PROXY,    FORWARD,         3.5.6",
+        "petstore-boot-3.5.6,      DATABASE, FORWARD,         3.5.6, ''",
+        "petstore-boot-3.5.6-proxy,PROXY,    FORWARD,         3.5.6, ''",
+        // STYLE-10: RFC 9457 errors, for both service modes
+        "petstore-modern,          DATABASE, FORWARD,         '',    MODERN",
+        "petstore-proxy-modern,    PROXY,    FORWARD,         '',    MODERN",
     })
-    void specFlowOutputIsStable(String scenario, String serviceMode, String upstreamAuth, String bootVersion) throws Exception {
+    void specFlowOutputIsStable(String scenario, String serviceMode, String upstreamAuth, String bootVersion, String style) throws Exception {
         GeneratorConfig cfg = Generation.config(target);
         cfg.options.serviceMode = serviceMode;
         cfg.security.upstreamAuth = upstreamAuth;
         if (!bootVersion.isEmpty()) cfg.options.springBootVersion = bootVersion;
+        if (!style.isEmpty()) Generation.style(cfg, style);
         var model = Generation.mapSpec(Path.of("samples", "petstore.yaml"), cfg);
         Golden.assertMatches(scenario, Generation.byPath(Generation.generate(model, cfg)));
     }

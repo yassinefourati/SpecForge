@@ -40,6 +40,11 @@ public final class SuggestionEngine {
         Pattern.compile("next\\s+value\\s+for\\s+([\\w$#.\"`\\[\\]]+)", Pattern.CASE_INSENSITIVE),
         Pattern.compile("((?:\"?[\\w$#]+\"?\\.)?\"?[\\w$#]+\"?)\\.\"?nextval\"?", Pattern.CASE_INSENSITIVE));
     private static final Set<String> FILTERABLE = Set.of("String", "Integer", "Long", "Short", "Boolean", "UUID", "LocalDate");
+    /** Types a range filter can compare; each has a ValueConversions method in the generated project. */
+    private static final Set<String> RANGEABLE = Set.of("Integer", "Long", "Short", "BigDecimal", "Double", "Float",
+        "LocalDate", "LocalDateTime", "OffsetDateTime", "LocalTime", "OffsetTime");
+    /** Never suggested for free-text search: searching them leaks whether a value exists. */
+    private static final Pattern SENSITIVE = Pattern.compile("(?i).*(password|passwd|secret|token|hash|salt).*");
     private static final Set<String> SORTABLE = Set.of("String", "Integer", "Long", "Short", "Boolean", "UUID", "LocalDate",
         "LocalDateTime", "OffsetDateTime", "LocalTime", "BigDecimal", "Double", "Float");
 
@@ -51,6 +56,8 @@ public final class SuggestionEngine {
         public List<String> warnings = new ArrayList<>();
         /** use-case controllers (OPS-3) */
         public List<io.specforge.model.DbModel.DbUseCase> useCases = new ArrayList<>();
+        /** the modules of the tables, suggested or chosen (ARCH-3) */
+        public List<io.specforge.model.DbModel.DbModule> modules = new ArrayList<>();
     }
 
     /** Java types a column can be mapped to by the user (MAP-11), with the import each needs. */
@@ -62,6 +69,21 @@ public final class SuggestionEngine {
         Map.entry("LocalDateTime", "java.time.LocalDateTime"), Map.entry("LocalTime", "java.time.LocalTime"),
         Map.entry("OffsetDateTime", "java.time.OffsetDateTime"), Map.entry("OffsetTime", "java.time.OffsetTime"),
         Map.entry("Instant", "java.time.Instant"));
+
+    private boolean split;
+    private boolean modular;
+
+    /** MODULAR architecture (ARCH-5): no JPA relation crosses a module boundary. */
+    public SuggestionEngine modular(boolean modular) {
+        this.modular = modular;
+        return this;
+    }
+
+    /** REQUEST_RESPONSE style (STYLE-9): every entity gets an XxxRequest and an XxxResponse record. */
+    public SuggestionEngine split(boolean split) {
+        this.split = split;
+        return this;
+    }
 
     public Result build(Snapshot snap, GenerationPlan plan) {
         Result res = new Result();
@@ -116,7 +138,19 @@ public final class SuggestionEngine {
         for (String q : res.joinTables) addManyToMany(snap.table(q), byTable, res.warnings);
         syncReferenceTypes(res.entities);
         addInverses(res.entities);
+        // modules are suggested always (the Map step shows them); only the modular architecture cuts relations
+        res.modules = ModuleSplitter.assign(byTable, p, res.warnings);
+        if (modular) ModuleSplitter.cut(byTable, res.warnings);
+        // before the use cases: their records refer to the request / response names (STYLE-9)
+        if (split) {
+            for (DbEntity ent : res.entities) {
+                ent.split = true;
+                ent.dtoName = ent.className + "Response";
+                ent.requestName = ent.className + "Request";
+            }
+        }
         res.useCases = new UseCaseBuilder(byTable, res.warnings).build(p.controllers);
+        if (modular) ModuleSplitter.useCases(res.useCases, res.warnings);
         // Oracle: the generated app does not quote every identifier (its driver cannot return generated keys for
         // quoted schema.table names), so a name that is not plain uppercase is quoted on its own (INT-8)
         if ("ORACLE".equals(snap.engine)) for (DbEntity ent : res.entities) quoteWhereNeeded(ent);
@@ -194,6 +228,7 @@ public final class SuggestionEngine {
         e.varName = Names.decap(e.className);
         // known now so use-case records can refer to it; the generator assigns the same name (and the others)
         e.dtoName = e.className + "Dto";
+        e.requestName = e.dtoName;
         // URLs follow the table, not a class name adjusted for Java (configurations → /configurations)
         e.path = pathOf(suggestedClass(t.name));
         e.comment = t.comment;
@@ -336,6 +371,8 @@ public final class SuggestionEngine {
         for (DbField f : e.dtoFields()) if (FILTERABLE.contains(f.javaType) && !TypeRules.opaque(f.jdbcTypeCode)) e.filterable.add(f.name);
         for (DbRelation r : e.relations) if (r.dtoField != null && FILTERABLE.contains(r.dtoField.javaType)) e.filterable.add(r.dtoField.name);
         for (DbField f : e.dtoFields()) if (SORTABLE.contains(f.javaType) && !TypeRules.opaque(f.jdbcTypeCode)) e.sortable.add(f.name);
+        for (DbField f : e.dtoFields()) if (searchSuggested(f)) e.searchable.add(f.name);
+        for (DbField f : e.fields) if (RANGEABLE.contains(f.javaType) && !TypeRules.opaque(f.jdbcTypeCode)) e.rangeable.add(f.name);
         List<DbField> components = new ArrayList<>(e.dtoFields());
         for (DbRelation r : e.relations) if (r.dtoField != null) components.add(r.dtoField);
         for (DbField f : components) {
@@ -351,8 +388,29 @@ public final class SuggestionEngine {
                 if (cd.sort && SORTABLE.contains(f.javaType) && !TypeRules.opaque(f.jdbcTypeCode)) e.sortable.add(f.name);
                 else if (cd.sort) e.warnings.add("column " + f.column + " (" + f.javaType + ") cannot be used for sorting");
             }
+            if (cd.search != null) {
+                e.searchable.remove(f.name);
+                if (cd.search && searchable(f)) e.searchable.add(f.name);
+                else if (cd.search) e.warnings.add("column " + f.column + " (" + f.javaType + ") cannot be searched as text");
+            }
+            if (cd.range != null) {
+                e.rangeable.remove(f.name);
+                if (cd.range && RANGEABLE.contains(f.javaType) && !TypeRules.opaque(f.jdbcTypeCode)) e.rangeable.add(f.name);
+                else if (cd.range) e.warnings.add("column " + f.column + " (" + f.javaType + ") cannot be used as a range");
+            }
         }
         return e;
+    }
+
+    /** Text the database can compare with LIKE: a string column that is not JSON or another opaque type. */
+    private static boolean searchable(DbField f) {
+        return "String".equals(f.javaType) && !TypeRules.opaque(f.jdbcTypeCode);
+    }
+
+    /** Suggested for q: bounded text (not CLOB-sized), not a relation id, never a secret-looking name. */
+    private static boolean searchSuggested(DbField f) {
+        return searchable(f) && f.relation.isEmpty() && f.length != null && f.length <= 4000
+            && !SENSITIVE.matcher(f.name).matches() && !SENSITIVE.matcher(f.column).matches();
     }
 
     /** MAP-1, MAP-11: the user's key strategy for a single-column key. Impossible choices keep the suggestion with a warning. */
@@ -485,6 +543,7 @@ public final class SuggestionEngine {
         f.nullable = c.nullable;
         f.writable = !c.generated;
         f.dbDefault = c.defaultValue != null || c.identity || c.autoIncrement || c.generated;
+        f.defaultValue = c.defaultValue;
         boolean lob = c.jdbcType == java.sql.Types.LONGVARCHAR || c.jdbcType == java.sql.Types.LONGNVARCHAR
             || c.jdbcType == java.sql.Types.CLOB || c.jdbcType == java.sql.Types.NCLOB;
         if (f.javaType.equals("String") && c.size != null && c.size > 0 && c.size < 65_535 && !"text".equalsIgnoreCase(c.vendorType)

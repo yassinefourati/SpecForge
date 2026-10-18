@@ -21,6 +21,8 @@ public final class BuildResolver {
         public String groupId = "";
         public String artifactId = "";
         public String scope = "compile";
+        /** only for libraries the Spring Boot BOM does not manage (e.g. ArchUnit); "" = managed */
+        public String version = "";
         public boolean optional;
         public String comment = "";
 
@@ -41,8 +43,8 @@ public final class BuildResolver {
 
     /**
      * @param ids dependency ids in the order they should appear; an id starting with "#" is emitted as a comment;
-     *            "=group:artifact[:scope]" is a library the Spring Boot BOM manages but Initializr has no id for
-     *            (written without a version, VER-3)
+     *            "=group:artifact[:scope[:version]]" is a library Initializr has no id for: managed by the Spring
+     *            Boot BOM (no version, VER-3), or pinned when the BOM does not manage it
      */
     public static Build resolve(SpringMetadata m, String bootVersion, List<String> ids) {
         Build b = new Build();
@@ -66,6 +68,7 @@ public final class BuildResolver {
                 e.groupId = gav[0];
                 e.artifactId = gav[1];
                 e.scope = gav.length > 2 ? gav[2] : "compile";
+                e.version = gav.length > 3 ? gav[3] : "";
                 if (seen.add(e.groupId + ":" + e.artifactId + ":" + e.scope)) main.add(e);
                 continue;
             }

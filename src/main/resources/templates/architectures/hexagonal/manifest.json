@@ -1,0 +1,148 @@
+{
+  "architecture": "hexagonal",
+  "remove": [
+    "db-entity",
+    "db-repository",
+    "db-mapper",
+    "db-service",
+    "db-controller",
+    "db-controller-test",
+    "db-usecase-controller",
+    "db-usecase-service",
+    "db-usecase-record",
+    "db-dto",
+    "db-request"
+  ],
+  "templates": [
+    {
+      "id": "hex-domain",
+      "layer": "entities",
+      "package": "domain",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-domain.java.ftl",
+      "fileName": "[=entity.className].java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: the domain model, plain Java"
+    },
+    {
+      "id": "hex-response",
+      "layer": "models",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-dto.java.ftl",
+      "fileName": "[=entity.db.dtoName].java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: what the inbound port returns"
+    },
+    {
+      "id": "hex-request",
+      "layer": "models",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-request.java.ftl",
+      "fileName": "[=entity.db.requestName].java",
+      "when": "!entity.db.id.composite() && entity.db.split",
+      "description": "Hexagonal: what the inbound port accepts"
+    },
+    {
+      "id": "hex-port-in",
+      "layer": "models",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-port-in.java.ftl",
+      "fileName": "[=entity.className]UseCases.java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: the inbound port (what the application offers)"
+    },
+    {
+      "id": "hex-port-out",
+      "layer": "repositories",
+      "package": "portOut",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-port-out.java.ftl",
+      "fileName": "[=entity.className]RepositoryPort.java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: the outbound port (what the application needs from storage)"
+    },
+    {
+      "id": "hex-service",
+      "layer": "services",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-service.java.ftl",
+      "fileName": "[=entity.className]Service.java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: the application service, implementing the inbound port over the outbound one"
+    },
+    {
+      "id": "hex-controller",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-controller.java.ftl",
+      "fileName": "[=entity.db.controllerName].java",
+      "when": "!entity.db.id.composite() && entity.db.hasController()",
+      "description": "Hexagonal: the web adapter (REST endpoints over the inbound port)"
+    },
+    {
+      "id": "hex-jpa-entity",
+      "layer": "entities",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-jpa-entity.java.ftl",
+      "fileName": "[=entity.className]JpaEntity.java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: the table's JPA mapping, inside the persistence adapter"
+    },
+    {
+      "id": "hex-jpa-repository",
+      "layer": "repositories",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-jpa-repository.java.ftl",
+      "fileName": "[=entity.className]SpringDataRepository.java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: Spring Data repository, inside the persistence adapter"
+    },
+    {
+      "id": "hex-persistence-adapter",
+      "layer": "entities",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "hex-persistence-adapter.java.ftl",
+      "fileName": "[=entity.className]PersistenceAdapter.java",
+      "when": "!entity.db.id.composite()",
+      "description": "Hexagonal: the persistence adapter, implementing the outbound port with JPA"
+    },
+    {
+      "id": "hex-page-query",
+      "layer": "models",
+      "scope": "GLOBAL",
+      "flow": "DATABASE",
+      "template": "hex-page-query.java.ftl",
+      "fileName": "PageQuery.java",
+      "description": "Hexagonal: a page request the ports understand, without Spring"
+    },
+    {
+      "id": "hex-page-result",
+      "layer": "models",
+      "scope": "GLOBAL",
+      "flow": "DATABASE",
+      "template": "hex-page-result.java.ftl",
+      "fileName": "PageResult.java",
+      "description": "Hexagonal: one page of results, without Spring"
+    },
+    {
+      "id": "hex-architecture-test",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "TEST",
+      "flow": "DATABASE",
+      "template": "hex-architecture-test.java.ftl",
+      "fileName": "ArchitectureTest.java",
+      "description": "Hexagonal: ArchUnit rules that keep the domain free of frameworks and adapters (ARCH-6)"
+    }
+  ]
+}

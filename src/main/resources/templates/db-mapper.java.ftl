@@ -12,19 +12,21 @@ import java.util.stream.Collectors;
 </#if>
 import [=entityPackage].[=e.className];
 <#list e.relations as r>
-import [=entityPackage].[=r.targetClass];
+import [=pkgOf(r.targetClass, "entities")].[=r.targetClass];
 </#list>
 <#list e.manyToMany as m>
-import [=entityPackage].[=m.targetClass];
+import [=pkgOf(m.targetClass, "entities")].[=m.targetClass];
 </#list>
+import [=sharedServicePackage].ValueConversions;
 import [=modelPackage].[=e.dtoName];
+import [=modelPackage].[=e.requestName];
 import [=ns].persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Converts between [=e.className] and [=e.dtoName]. Related rows are attached by reference (no extra query).
+ * Converts between [=e.className] and [=e.dtoName]<#if e.split> / [=e.requestName]</#if>. Related rows are attached by reference (no extra query).
  *
  * [=generatedNote]
  */
@@ -53,9 +55,22 @@ public class [=e.mapperName] {
 </#list>
         );
     }
+<#if e.split && options.validation && e.serviceOp("patch")>
+<#assign byName = {}>
+<#list e.dtoComponents() as f><#assign byName = byName + {f.name: args[f?index]}></#list>
+
+    /** The entity's current values as a request, so a patched entity is checked against the request's rules. */
+    public [=e.requestName] toRequest([=e.className] entity) {
+        return new [=e.requestName](
+<#list e.requestComponents() as f>
+            [=byName[f.name]]<#sep>,</#sep>
+</#list>
+        );
+    }
+</#if>
 
     /** Copies every writable value of the DTO; the key only when {@code includeKey} (creation with an assigned key). */
-    public void copyToEntity([=e.dtoName] dto, [=e.className] entity, boolean includeKey) {
+    public void copyToEntity([=e.requestName] dto, [=e.className] entity, boolean includeKey) {
 <#if e.id.composite()>
         if (includeKey) {
 <#list e.id.keyFields as f>

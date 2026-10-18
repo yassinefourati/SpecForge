@@ -86,15 +86,43 @@ public class Generator {
         if (!problems.isEmpty()) throw new GenException("Invalid settings:\n- " + String.join("\n- ", problems));
         Result result = new Result();
         result.messages.addAll(api.messages);
-        BuildResolver.Build build = BuildResolver.resolve(SpringMetadataSource.current(), cfg.options.springBootVersion, buildIds(api, cfg));
+        // CONTRACT-1: a module for an existing admin-template project, rendered by that contract's own template set
+        TemplateManager templates = this.templates;
+        io.specforge.contract.AdminTemplateModule module = null;
+        if (cfg.contract().adminTemplate()) {
+            if (!"DATABASE".equals(api.source.kind)) {
+                result.messages.add(new Msg("WARN", "admin-template modules are generated from a database; this spec is generated as a standalone project."));
+            } else {
+                module = io.specforge.contract.AdminTemplateModule.build(api, cfg, result.messages);
+                if (cfg.templatesDir != null && !cfg.templatesDir.isBlank())
+                    result.messages.add(new Msg("INFO", "Your template folder applies to standalone projects; the admin-template module uses the contract's own templates."));
+                cfg = contractConfig(cfg, module);
+                templates = TemplateManager.contract("admin-template");
+            }
+        }
+        ProjectChecks checks = ProjectChecks.of(api, cfg, result.messages);
+        if ("HEXAGONAL".equalsIgnoreCase(cfg.architecture) && module == null && "DATABASE".equals(api.source.kind)) {
+            templates = templates.withArchitecture("hexagonal");
+            for (ClassDef c : api.entities)
+                if (c.db != null && c.db.id.composite())
+                    result.messages.add(new Msg("WARN", c.className + " has a composite key, which the hexagonal architecture does not support yet; it is not generated."));
+            if (!api.useCases.isEmpty())
+                result.messages.add(new Msg("WARN", "Use-case controllers are not generated in the hexagonal architecture yet."));
+            if (cfg.tests != null && cfg.tests.controllers)
+                result.messages.add(new Msg("INFO", "Controller tests are not generated in the hexagonal architecture yet; ArchitectureTest checks the layers."));
+        }
+        BuildResolver.Build build = BuildResolver.resolve(SpringMetadataSource.current(), cfg.options.springBootVersion, buildIds(api, cfg, checks));
         for (String w : build.warnings) result.messages.add(new Msg("WARN", w));
-        assignNames(api, cfg);
+        PackageLayout layout = PackageLayout.of(cfg);
+        assignNames(api, cfg, layout);
         layerDependencyWarnings(cfg, result);
         String boot = cfg.options.springBootVersion == null ? "" : cfg.options.springBootVersion.trim();
         if (!cfg.options.isJakarta() && !boot.startsWith("2."))
             result.messages.add(new Msg("WARN", "javax.* imports require Spring Boot 2.7.x; set the Spring Boot version to 2.7.18 (currently " + boot + ")."));
         if (cfg.options.isJakarta() && boot.startsWith("2."))
             result.messages.add(new Msg("WARN", "jakarta.* imports require Spring Boot 3.x (currently " + boot + ")."));
+        if (cfg.style().problemDetail() && boot.startsWith("2."))
+            result.messages.add(new Msg("WARN", "Problem-detail errors (RFC 9457) use Spring Framework 6's ProblemDetail, which needs Spring Boot 3 or newer (currently " + boot + ")."));
         if (cfg.options.isProxy() && (boot.startsWith("2.") || boot.matches("3\\.[01](\\..*)?")))
             result.messages.add(new Msg("WARN", "Proxy mode uses Spring's RestClient, which needs Spring Boot 3.2 or newer (currently " + boot + ")."));
         if (cfg.options.isProxy() && "SERVICE_ACCOUNT".equalsIgnoreCase(cfg.security.upstreamAuth) && !api.security.present)
@@ -114,6 +142,8 @@ public class Generator {
             throw new GenException("Cannot load templates: " + e.getMessage(), e);
         }
 
+        if (module == null) styleWarnings(api, cfg, manifest, result);
+
         Map<String, String> fqnByKey = new HashMap<>();
         for (ClassDef c : api.entities) fqnByKey.put(c.key, c.fqn);
         for (ClassDef c : api.dtos) fqnByKey.put(c.key, c.fqn);
@@ -129,15 +159,21 @@ public class Generator {
                 throw new GenException("Template '" + entry.id + "' uses unknown layer '" + entry.layer + "'. Known layers: " + GeneratorConfig.LAYER_KEYS);
             if (entry.layer.equals("project") && !cfg.options.generateProjectFiles) continue;
             if (!entry.rendersFor(api.source.kind)) continue;
-            Map<String, Object> base = baseModel(api, cfg, entry, build);
+            Map<String, Object> base = baseModel(api, cfg, entry, build, layout);
+            base.put("checks", checks);
+            if (module != null) base.put("module", module);
             // per-item scopes evaluate "when" once per item (with entity / item in scope), see render()
             boolean perItem = !entry.scope.equalsIgnoreCase("GLOBAL");
             if (!perItem && !evalWhen(fm, entry, base)) continue;
             switch (entry.scope.toUpperCase(Locale.ROOT)) {
                 case "ENTITY" -> {
                     // per-entity templates of other layers (e.g. repositories) go to that layer's package
-                    for (ClassDef c : api.entities) render(fm, entry, cfg, target, base, entry.layer.equals("entities") ? c.pkg : cfg.layerPackage(entry.layer),
-                        "entity", c, c.allTypes(), fqnByKey, seen, result);
+                    for (ClassDef c : api.entities) {
+                        String key = entry.packageKey == null || entry.packageKey.isBlank() ? entry.layer : entry.packageKey;
+                        String pkg = key.equals("entities") ? c.pkg
+                            : c.db != null && c.db.packages.containsKey(key) ? c.db.packages.get(key) : cfg.layerPackage(entry.layer);
+                        render(fm, entry, cfg, target, entityModel(base, c), pkg, "entity", c, c.allTypes(), fqnByKey, seen, result);
+                    }
                 }
                 case "DTO" -> {
                     for (ClassDef c : api.dtos) render(fm, entry, cfg, target, base, c.pkg, "dto", c, c.allTypes(), fqnByKey, seen, result);
@@ -149,15 +185,34 @@ public class Generator {
                     for (ResourceModel r : api.resources) render(fm, entry, cfg, target, base, cfg.layerPackage(entry.layer), "resource", r, r.allTypes(), fqnByKey, seen, result);
                 }
                 case "USECASE" -> {
-                    for (DbModel.DbUseCase u : api.useCases) render(fm, entry, cfg, target, base, cfg.layerPackage(entry.layer), "useCase", u, List.of(), fqnByKey, seen, result);
+                    for (DbModel.DbUseCase u : api.useCases) {
+                        Map<String, Object> m = base;
+                        if (layout.modular()) {
+                            m = new HashMap<>(base);
+                            m.put("modelPackage", layout.useCase("models", u.module));
+                            m.put("servicePackage", layout.useCase("services", u.module));
+                            m.put("controllerPackage", layout.useCase("controllers", u.module));
+                        }
+                        render(fm, entry, cfg, target, m, layout.useCase(entry.layer, u.module), "useCase", u, List.of(), fqnByKey, seen, result);
+                    }
                 }
                 case "USECASE_RECORD" -> {
                     // records are shared between use cases by name (the same parent and child give the same record)
                     Map<String, DbModel.DbRecord> records = new java.util.LinkedHashMap<>();
-                    for (DbModel.DbUseCase u : api.useCases) for (DbModel.DbRecord rec : u.records) records.putIfAbsent(rec.name, rec);
-                    for (DbModel.DbRecord rec : records.values()) render(fm, entry, cfg, target, base, cfg.layerPackage(entry.layer), "record", rec, List.of(), fqnByKey, seen, result);
+                    Map<String, String> recordModule = new HashMap<>();
+                    for (DbModel.DbUseCase u : api.useCases) for (DbModel.DbRecord rec : u.records) {
+                        records.putIfAbsent(rec.name, rec);
+                        recordModule.putIfAbsent(rec.name, u.module);
+                    }
+                    for (DbModel.DbRecord rec : records.values())
+                        render(fm, entry, cfg, target, base, layout.useCase(entry.layer, recordModule.get(rec.name)), "record", rec, List.of(), fqnByKey, seen, result);
                 }
-                case "GLOBAL" -> render(fm, entry, cfg, target, base, cfg.layerPackage(entry.layer), null, null, List.of(), fqnByKey, seen, result);
+                case "GLOBAL" -> render(fm, entry, cfg, target, base, layout.global(entry.layer), null, null, List.of(), fqnByKey, seen, result);
+                case "MODULE" -> {
+                    // ARCH-4: one file per module of the modular architecture (package-info.java)
+                    for (DbModel.DbModule mod : api.modules)
+                        render(fm, entry, cfg, target, base, cfg.basePackage + "." + mod.name, "appModule", mod, List.of(), fqnByKey, seen, result);
+                }
                 default -> throw new GenException("Template '" + entry.id + "' has unknown scope '" + entry.scope + "'.");
             }
         }
@@ -168,16 +223,18 @@ public class Generator {
 
     // ------------------------------------------------------------------ naming
 
-    private void assignNames(ApiModel api, GeneratorConfig cfg) {
+    private void assignNames(ApiModel api, GeneratorConfig cfg, PackageLayout layout) {
         for (ClassDef c : api.entities) {
-            c.pkg = cfg.layerPackage("entities");
+            if (c.db != null) layout.assign(c.db);
+            c.pkg = c.db != null ? c.db.packages.get("entities") : cfg.layerPackage("entities");
             c.fqn = c.pkg + "." + c.className;
             String base = c.db != null ? c.className : Names.className(c.key);
             c.repositoryName = cfg.naming.repository.replace("{Name}", base);
-            c.repositoryFqn = cfg.layerPackage("repositories") + "." + c.repositoryName;
+            c.repositoryFqn = (c.db != null ? c.db.packages.get("repositories") : cfg.layerPackage("repositories")) + "." + c.repositoryName;
             if (c.db != null) {
                 c.db.repositoryName = c.repositoryName;
-                c.db.dtoName = c.className + "Dto";
+                c.db.dtoName = c.className + (c.db.split ? "Response" : "Dto");
+                c.db.requestName = c.db.split ? c.className + "Request" : c.db.dtoName;
                 c.db.mapperName = c.className + "Mapper";
                 c.db.serviceName = cfg.naming.service.replace("{Name}", c.className);
                 c.db.controllerName = c.db.controllerNameOverride.isEmpty() ? cfg.naming.controller.replace("{Name}", c.className) : c.db.controllerNameOverride;
@@ -191,6 +248,7 @@ public class Generator {
                 taken.add(c.db.serviceName);
                 taken.add(c.db.controllerName);
                 taken.add(c.db.dtoName);
+                taken.add(c.db.requestName);
                 taken.add(c.db.mapperName);
                 taken.add(c.repositoryName);
             }
@@ -199,6 +257,20 @@ public class Generator {
             u.controllerName = unique(cfg.naming.controller.replace("{Name}", u.name), taken);
             u.serviceName = unique(cfg.naming.service.replace("{Name}", u.name), taken);
             for (DbModel.DbRecord rec : u.records) taken.add(rec.name);
+        }
+        // use-case records refer to tables' records by simple name; with a per-table layout they live elsewhere (ARCH-1)
+        for (DbModel.DbUseCase u : api.useCases) {
+            for (DbModel.DbRecord rec : u.records) {
+                for (DbModel.DbField f : rec.components) {
+                    for (ClassDef c : api.entities) {
+                        if (c.db == null) continue;
+                        for (String name : List.of(c.db.dtoName, c.db.requestName)) {
+                            if (f.javaType.matches(".*\\b" + java.util.regex.Pattern.quote(name) + "\\b.*"))
+                                rec.imports.add(c.db.packages.get("models") + "." + name);
+                        }
+                    }
+                }
+            }
         }
         for (ClassDef c : api.dtos) {
             c.pkg = cfg.layerPackage("models");
@@ -229,6 +301,7 @@ public class Generator {
         if (item instanceof ResourceModel r) return r.name;
         if (item instanceof DbModel.DbUseCase u) return u.name;
         if (item instanceof DbModel.DbRecord r) return r.name;
+        if (item instanceof DbModel.DbModule m) return m.name;
         return "";
     }
 
@@ -238,6 +311,7 @@ public class Generator {
         if (item instanceof ResourceModel r) return r.controllerName;
         if (item instanceof DbModel.DbUseCase u) return u.controllerName;
         if (item instanceof DbModel.DbRecord r) return r.name;
+        if (item instanceof DbModel.DbModule m) return "module " + m.name;
         return "the project";
     }
 
@@ -284,6 +358,18 @@ public class Generator {
         return c;
     }
 
+    /**
+     * A custom template set keeps its own manifest.json, so it may predate a style option whose files come from a
+     * manifest entry it does not have (TemplateManager: an external manifest replaces the bundled one).
+     */
+    private static void styleWarnings(ApiModel api, GeneratorConfig cfg, TemplateManager.Manifest manifest, Result r) {
+        boolean split = api.entities.stream().anyMatch(c -> c.db != null && c.db.split);
+        if (split && manifest.templates.stream().noneMatch(t -> t.id.equals("db-request")))
+            r.messages.add(new Msg("WARN", "The DTO style \"Request and Response\" needs the template 'db-request', which the "
+                + "manifest.json of your template set does not list; add its entry from the bundled manifest, or the XxxRequest "
+                + "records will be missing and the project will not compile."));
+    }
+
     private void layerDependencyWarnings(GeneratorConfig cfg, Result r) {
         String[][] deps = {
             {"repositories", "entities"}, {"services", "repositories"}, {"services", "entities"},
@@ -299,7 +385,7 @@ public class Generator {
     // ------------------------------------------------------------------ rendering
 
     /** Dependency ids of the generated build, in build-file order (VER-3). "#…" entries become comments. */
-    static List<String> buildIds(ApiModel api, GeneratorConfig cfg) {
+    static List<String> buildIds(ApiModel api, GeneratorConfig cfg, ProjectChecks checks) {
         List<String> ids = new ArrayList<>();
         ids.add("web");
         if (!cfg.options.isProxy() || "DATABASE".equals(api.source.kind)) ids.add("data-jpa");
@@ -320,10 +406,59 @@ public class Generator {
         }
         else ids.add("POSTGRES".equals(cfg.options.database) ? "postgresql" : "h2");
         if (cfg.options.lombok) ids.add("lombok");
+        // MIG-1: Flyway and the engine's module; TEST-2: the application test's container
+        if (!checks.flyway.equals("NONE")) {
+            ids.add("flyway");
+            if (!checks.flywayModule.isEmpty()) ids.add("=" + checks.flywayModule);
+        }
+        for (String a : checks.testArtifacts) ids.add("=" + a + ":test");
+        // ARCH-6: ArchUnit checks the hexagon's rules (not managed by the Spring Boot BOM)
+        if ("HEXAGONAL".equalsIgnoreCase(cfg.architecture) && "DATABASE".equals(api.source.kind) && !cfg.contract().adminTemplate())
+            ids.add("=com.tngtech.archunit:archunit-junit5:test:1.5.0");
+        // ARCH-4: Spring Modulith (its BOM is imported by the build file)
+        if (!checks.modulithVersion.isEmpty()) {
+            ids.add("=org.springframework.modulith:spring-modulith-starter-core");
+            ids.add("=org.springframework.modulith:spring-modulith-starter-test:test");
+            ids.add("=org.springframework.modulith:spring-modulith-docs:test");
+        }
         return ids;
     }
 
-    private Map<String, Object> baseModel(ApiModel api, GeneratorConfig cfg, Entry entry, BuildResolver.Build build) {
+    /** For a per-entity template: the entity's own packages as entityPackage, modelPackage, … (ARCH-1). */
+    private static Map<String, Object> entityModel(Map<String, Object> base, ClassDef c) {
+        if (c.db == null || c.db.packages.isEmpty()) return base;
+        Map<String, Object> m = new HashMap<>(base);
+        m.put("entityPackage", c.db.packages.get("entities"));
+        m.put("modelPackage", c.db.packages.get("models"));
+        m.put("repositoryPackage", c.db.packages.get("repositories"));
+        m.put("servicePackage", c.db.packages.get("services"));
+        m.put("controllerPackage", c.db.packages.get("controllers"));
+        return m;
+    }
+
+    /** The settings an admin-template module is written with: the module's package, the project's folders. */
+    private static GeneratorConfig contractConfig(GeneratorConfig cfg, io.specforge.contract.AdminTemplateModule module) {
+        GeneratorConfig c;
+        try {
+            c = io.specforge.util.Json.MAPPER.readValue(io.specforge.util.Json.write(cfg), GeneratorConfig.class);
+        } catch (IOException e) {
+            throw new GenException("Cannot copy the settings: " + e.getMessage(), e);
+        }
+        c.basePackage = module.basePackage;
+        // the contract has its own layout (one package per module); architectures apply to standalone projects
+        c.architecture = "LAYERED";
+        c.sourceRoot = "backend/src/main/java";
+        c.resourceRoot = "backend/src/main/resources";
+        if (!module.projectDir.isEmpty()) c.targetDir = module.projectDir;
+        c.layers = GeneratorConfig.defaultLayers();
+        for (GeneratorConfig.Layer l : c.layers.values()) {
+            l.subPackage = "";
+            l.rootDir = "";
+        }
+        return c;
+    }
+
+    private Map<String, Object> baseModel(ApiModel api, GeneratorConfig cfg, Entry entry, BuildResolver.Build build, PackageLayout layout) {
         Map<String, Object> m = new HashMap<>();
         m.put("build", build);
         m.put("source", api.source);
@@ -334,19 +469,31 @@ public class Generator {
         m.put("secCfg", cfg.security);
         m.put("security", api.security);
         m.put("naming", cfg.naming);
+        m.put("style", cfg.style());
+        m.put("lists", cfg.lists());
         boolean jakarta = cfg.options.isJakarta();
         m.put("jakarta", jakarta);
         m.put("ns", jakarta ? "jakarta" : "javax");
         m.put("basePackage", cfg.basePackage);
-        m.put("layerPackage", cfg.layerPackage(entry.layer));
+        m.put("layerPackage", layout.global(entry.layer));
         m.put("entityPackage", cfg.layerPackage("entities"));
         m.put("repositoryPackage", cfg.layerPackage("repositories"));
         m.put("servicePackage", cfg.layerPackage("services"));
         m.put("controllerPackage", cfg.layerPackage("controllers"));
         m.put("securityPackage", cfg.layerPackage("security"));
-        m.put("exceptionPackage", cfg.layerPackage("exceptions"));
+        m.put("exceptionPackage", layout.global("exceptions"));
         m.put("modelPackage", cfg.layerPackage("models"));
         m.put("enumPackage", cfg.layerPackage("enums"));
+        // what every table shares stays in the layer packages, whatever the layout (ARCH-1)
+        m.put("sharedModelPackage", layout.global("models"));
+        m.put("sharedServicePackage", layout.global("services"));
+        Map<String, DbModel.DbEntity> byClass = new HashMap<>();
+        for (ClassDef c : api.entities) if (c.db != null) byClass.put(c.className, c.db);
+        m.put("pkgOf", (TemplateMethodModelEx) args -> {
+            String cls = args.get(0).toString(), layer = args.get(1).toString();
+            DbModel.DbEntity e = byClass.get(cls);
+            return e != null && e.packages.containsKey(layer) ? e.packages.get(layer) : cfg.layerPackage(layer);
+        });
         m.put("doc", (TemplateMethodModelEx) args -> Names.doc(args.isEmpty() || args.get(0) == null ? "" : args.get(0) instanceof TemplateScalarModel sm ? sm.getAsString() : args.get(0).toString()));
         m.put("generatedNote", "Generated by SpecForge from \"" + api.title + "\" (" + api.version + "). Safe to edit.");
         return m;
@@ -414,6 +561,7 @@ public class Generator {
         switch (entry.kind.toUpperCase(Locale.ROOT)) {
             case "RESOURCE" -> abs = root0.resolve(cfg.resourceRoot).resolve(fileName);
             case "ROOT" -> abs = root0.resolve(fileName);
+            case "TEST" -> abs = root0.resolve(cfg.testRoot).resolve(pkg.replace('.', '/')).resolve(fileName);
             default -> abs = root0.resolve(cfg.sourceRoot).resolve(pkg.replace('.', '/')).resolve(fileName);
         }
         abs = abs.toAbsolutePath().normalize();

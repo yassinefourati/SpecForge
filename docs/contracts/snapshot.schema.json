@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specforge.io/contracts/snapshot.schema.json",
+  "title": "SpecForge source snapshot",
+  "description": "Everything introspected from a database at one moment (INT-1). Engine-neutral. Never contains secrets or row data. Bump schemaVersion on any incompatible change.",
+  "type": "object",
+  "required": ["schemaVersion", "id", "engine", "tables"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "description": "HMAC fingerprint of the connection settings and schemas (SEC-6); also the snapshot id." },
+    "engine": { "type": "string", "description": "SourceKind name, e.g. POSTGRESQL." },
+    "serverVersion": { "type": "string" },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "title": { "type": "string", "description": "Saved connection name, else the database name." },
+    "jdbcUrl": { "type": "string", "description": "JDBC URL without credentials or query parameters." },
+    "schemas": { "type": "array", "items": { "type": "string" } },
+    "tables": { "type": "array", "items": { "$ref": "#/$defs/table" } },
+    "sequences": { "type": "array", "items": { "$ref": "#/$defs/sequence" } },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "table": {
+      "type": "object",
+      "required": ["name", "columns"],
+      "properties": {
+        "schema": { "type": "string" },
+        "name": { "type": "string" },
+        "comment": { "type": "string" },
+        "rowEstimate": { "type": ["integer", "null"], "description": "null when the engine gives no estimate" },
+        "columns": { "type": "array", "items": { "$ref": "#/$defs/column" } },
+        "primaryKey": { "type": "array", "items": { "type": "string" }, "description": "Key columns in key order; empty when the table has none (SEL-4)." },
+        "foreignKeys": { "type": "array", "items": { "$ref": "#/$defs/foreignKey" } },
+        "uniqueKeys": { "type": "array", "items": { "$ref": "#/$defs/uniqueKey" } }
+      }
+    },
+    "column": {
+      "type": "object",
+      "required": ["name", "vendorType", "jdbcType"],
+      "properties": {
+        "name": { "type": "string" },
+        "vendorType": { "type": "string", "description": "The engine's own type name (jsonb, timestamptz, ...)." },
+        "jdbcType": { "type": "integer", "description": "java.sql.Types code" },
+        "size": { "type": ["integer", "null"], "description": "length for character types, precision for numeric types" },
+        "scale": { "type": ["integer", "null"] },
+        "nullable": { "type": "boolean" },
+        "defaultValue": { "type": ["string", "null"] },
+        "autoIncrement": { "type": "boolean" },
+        "identity": { "type": "boolean", "description": "GENERATED ... AS IDENTITY" },
+        "generated": { "type": "boolean", "description": "computed column (read-only)" },
+        "comment": { "type": "string" },
+        "position": { "type": "integer" }
+      }
+    },
+    "foreignKey": {
+      "type": "object",
+      "required": ["columns", "refTable", "refColumns"],
+      "properties": {
+        "name": { "type": "string" },
+        "columns": { "type": "array", "items": { "type": "string" } },
+        "refSchema": { "type": "string" },
+        "refTable": { "type": "string" },
+        "refColumns": { "type": "array", "items": { "type": "string" } },
+        "onUpdate": { "$ref": "#/$defs/rule" },
+        "onDelete": { "$ref": "#/$defs/rule" }
+      }
+    },
+    "rule": { "enum": ["CASCADE", "SET NULL", "SET DEFAULT", "RESTRICT", "NO ACTION"] },
+    "uniqueKey": {
+      "type": "object",
+      "required": ["columns"],
+      "properties": {
+        "name": { "type": "string" },
+        "columns": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "sequence": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "schema": { "type": "string" },
+        "name": { "type": "string" },
+        "start": { "type": "integer" },
+        "increment": { "type": "integer" },
+        "ownedBySchema": { "type": "string" },
+        "ownedByTable": { "type": "string" },
+        "ownedByColumn": { "type": "string" }
+      }
+    }
+  }
+}

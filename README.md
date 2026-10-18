@@ -63,6 +63,49 @@ Database:
 
 The connection is read-only on every level: read-only transaction, statement/lock timeouts, catalog queries only.
 
+## Code style
+
+Settings → **Code style** offers two presets and lets you change each choice afterwards:
+
+- **Modern** (suggested): errors as RFC 9457 problem details (`status`, `title`, `detail`, `errors[{field, message}]`),
+  and in the database flow separate `XxxRequest` (input, validated, no generated values) and `XxxResponse` (output)
+  records.
+- **Same as before**: the output of earlier versions (simple error JSON, one `XxxDto` per table).
+
+In the database flow, Settings → **List endpoints** adds free-text search (`q`), range filters (`priceFrom` /
+`priceTo`) and lenient sorting, for the columns you mark **Search** and **Range** in Map. Settings → Security can switch
+sign-in from a development user to **JWT access tokens** (e.g. Keycloak), optionally with a read and a write role.
+
+### admin-template modules
+
+Settings → **Where will this code live?** → "A module of my admin-template project" generates the selected
+tables as `com.admintemplate.<module>` in that project's conventions, plus:
+- a Flyway migration (tables, permission);
+- a `<Module>ModuleIT`;
+- the pages: a list and a create / edit dialog per table, in the project's frontend;
+- `backend/specforge-<module>.md` with the few lines to add to the project's own registries.
+
+Nothing in the project is edited.
+
+### Tests and migrations
+
+Settings → **Tests and migrations** (database flow) adds:
+- Flyway: the existing database becomes version 1, optionally with `V1__baseline.sql` holding the schema for empty
+  databases (PostgreSQL, MySQL, MariaDB, H2);
+- a web-layer test per controller;
+- a schema test that runs the app against a database created from V1 (a container of your engine, or H2 in memory).
+
+### Architecture
+
+Settings → **Architecture** (database flow):
+- **by layer** (default);
+- **by table** (one package per table);
+- **modules (Spring Modulith)**: groups of tables (suggested from foreign keys, changeable in Map), each with an
+  API package and an `internal` one, a `package-info.java`, and a generated `ModularStructureTests`. A foreign key
+  to another module's table becomes its id;
+- **ports and adapters (hexagonal)**: a plain domain model, inbound and outbound ports, an application service,
+  and web and JPA adapters per table, with a generated ArchUnit `ArchitectureTest`.
+
 ## Defaults (all changeable in Settings)
 
 Spring Boot 4.1.1 (3.5.x and 4.0.x selectable), Java 17, Jakarta, H2 (spec flow) or the source database (database flow), no Lombok, validation on, `OffsetDateTime`, resources grouped by tag, plural snake_case tables,

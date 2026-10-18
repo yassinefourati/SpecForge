@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,14 +31,24 @@ public final class GeneratedApp implements AutoCloseable {
     private final Path log;
     public final String base;
 
-    private GeneratedApp(Process process, Path log, String base) {
+    /** the Authorization header of {@link #call}: HTTP Basic with the development user unless a test sets another */
+    private final String auth;
+
+    private GeneratedApp(Process process, Path log, String base, String auth) {
         this.process = process;
         this.log = log;
         this.base = base;
+        this.auth = auth;
     }
 
     /** Packages the project, starts it with DB_URL / DB_USERNAME / DB_PASSWORD, and waits until {@code probePath} answers 200. */
     public static GeneratedApp buildAndStart(Path project, ConnectionSettings cs, String probePath) throws Exception {
+        return buildAndStart(project, cs, probePath, Map.of(), AUTH);
+    }
+
+    /** As above, with extra environment variables, and {@code auth} as the Authorization header of {@link #call}. */
+    public static GeneratedApp buildAndStart(Path project, ConnectionSettings cs, String probePath, Map<String, String> env,
+                                             String auth) throws Exception {
         Maven.Result build = Maven.run(project, "-DskipTests", "package");
         assertThat(build.ok()).as("generated project does not build:%n%s", build.errors()).isTrue();
         Path jar;
@@ -54,7 +65,8 @@ public final class GeneratedApp implements AutoCloseable {
         pb.environment().put("DB_URL", cs.jdbcUrl());
         pb.environment().put("DB_USERNAME", cs.user);
         pb.environment().put("DB_PASSWORD", cs.password);
-        GeneratedApp app = new GeneratedApp(pb.start(), log, "http://localhost:" + port);
+        pb.environment().putAll(env);
+        GeneratedApp app = new GeneratedApp(pb.start(), log, "http://localhost:" + port, auth);
         long deadline = System.currentTimeMillis() + 120_000;
         while (true) {
             assertThat(app.process.isAlive()).as("generated app exited:%n%s", app.tail()).isTrue();
@@ -70,7 +82,12 @@ public final class GeneratedApp implements AutoCloseable {
 
     /** An authenticated call; PATCH bodies are sent as merge-patch. */
     public HttpResponse<String> call(String method, String path, Object body) throws IOException, InterruptedException {
-        HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(base + path)).timeout(Duration.ofSeconds(30)).header("Authorization", AUTH);
+        return call(method, path, body, auth);
+    }
+
+    /** A call with the given Authorization header value. */
+    public HttpResponse<String> call(String method, String path, Object body, String authorization) throws IOException, InterruptedException {
+        HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(base + path)).timeout(Duration.ofSeconds(30)).header("Authorization", authorization);
         if (body == null) b.method(method, HttpRequest.BodyPublishers.noBody());
         else b.header("Content-Type", method.equals("PATCH") ? "application/merge-patch+json" : "application/json")
             .method(method, HttpRequest.BodyPublishers.ofString(Json.write(body)));

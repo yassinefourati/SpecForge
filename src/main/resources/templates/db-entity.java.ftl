@@ -4,6 +4,15 @@ package [=pkg];
 <#list e.entityImports as i>
 import [=i];
 </#list>
+<#list e.relations as r>
+import [=pkgOf(r.targetClass, "entities")].[=r.targetClass];
+</#list>
+<#list e.manyToMany as m>
+import [=pkgOf(m.targetClass, "entities")].[=m.targetClass];
+</#list>
+<#list e.inverses as inv>
+import [=pkgOf(inv.sourceClass, "entities")].[=inv.sourceClass];
+</#list>
 import [=ns].persistence.Column;
 import [=ns].persistence.Entity;
 import [=ns].persistence.Table;

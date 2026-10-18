@@ -26,7 +26,8 @@ import [=ns].validation.Valid;
 import [=entityPackage].[=e.className];
 </#if>
 import [=modelPackage].[=e.dtoName];
-import [=modelPackage].PageResponse;
+import [=modelPackage].[=e.requestName];
+import [=sharedModelPackage].PageResponse;
 import [=servicePackage].[=e.serviceName];
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -64,6 +65,12 @@ public class [=e.controllerName] {
     /**
      * One page of rows. Paging: {@code page}, {@code size}, {@code sort=property,asc|desc}.
      * Filters: <#if e.filterable?has_content>{@code [=e.filterable?join("}, {@code ")]}<#else>none</#if> (equality).
+<#if e.searchable?has_content>
+     * Text search: {@code q} in [=e.searchable?join(", ")] (case-insensitive, contains).
+</#if>
+<#if e.rangeable?has_content>
+     * Ranges (inclusive): <#list e.rangeable as p>{@code [=p]From} / {@code [=p]To}<#sep>, </#sep></#list>.
+</#if>
      */
     @GetMapping
     public ResponseEntity<PageResponse<[=e.dtoName]>> list(@RequestParam Map<String, String> params,
@@ -83,7 +90,7 @@ public class [=e.controllerName] {
 <#if e.op("create")>
 
     @PostMapping
-    public ResponseEntity<[=e.dtoName]> create(<#if options.validation>@Valid </#if>@RequestBody [=e.dtoName] dto) {
+    public ResponseEntity<[=e.dtoName]> create(<#if options.validation>@Valid </#if>@RequestBody [=e.requestName] dto) {
         [=e.dtoName] created = service.create(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("[=idPath]").buildAndExpand([=locationArgs]).toUri();
         return ResponseEntity.created(location).body(created);
@@ -92,7 +99,7 @@ public class [=e.controllerName] {
 <#if e.op("update")>
 
     @PutMapping("[=idPath]")
-    public ResponseEntity<[=e.dtoName]> update([=idParams], <#if options.validation>@Valid </#if>@RequestBody [=e.dtoName] dto) {
+    public ResponseEntity<[=e.dtoName]> update([=idParams], <#if options.validation>@Valid </#if>@RequestBody [=e.requestName] dto) {
         return ResponseEntity.ok(service.update([=idExpr], dto));
     }
 </#if>

@@ -45,7 +45,8 @@ public final class JavaTidy {
         }
         StringBuilder rest = new StringBuilder();
         for (int k = i; k < lines.length; k++) rest.append(lines[k]).append('\n');
-        String restText = rest.toString();
+        // used before the package line too: package-info.java carries its annotations there
+        String restText = sb + rest.toString();
         imports.removeIf(imp -> !imp.endsWith(".*") && !usedIn(restText, imp.substring(imp.lastIndexOf('.') + 1)));
         trimTrailingBlank(sb);
         sb.append("\n\n");

@@ -338,6 +338,24 @@ public final class Model {
         public String applicationClass = "Application";
         /** Where this model came from: an OpenAPI spec or a database (STU-12). */
         public DbModel.SourceFacts source = new DbModel.SourceFacts();
+        /** modular architecture: the modules (ARCH-3); empty otherwise */
+        public java.util.List<DbModel.DbModule> modules = new java.util.ArrayList<>();
+        /** database flow: the snapshot and the tables the plan selected (entities and join tables), for DDL (MIG-2) */
+        private io.specforge.snapshot.Snapshot snapshot;
+        private java.util.List<String> selectedTables = java.util.List.of();
+
+        public io.specforge.snapshot.Snapshot snapshot() {
+            return snapshot;
+        }
+
+        public java.util.List<String> selectedTables() {
+            return selectedTables;
+        }
+
+        public void snapshot(io.specforge.snapshot.Snapshot snap, java.util.List<String> tables) {
+            this.snapshot = snap;
+            this.selectedTables = java.util.List.copyOf(tables);
+        }
         /** PROXY mode: base URL of the upstream API, including its base path */
         public String upstreamUrl = "";
         public List<ResourceModel> resources = new ArrayList<>();

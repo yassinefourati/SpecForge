@@ -25,6 +25,13 @@ public final class Generation {
         return cfg;
     }
 
+    /** Applies a named style preset (GeneratorConfig.PRESETS), as the UI does. */
+    public static void style(GeneratorConfig cfg, String preset) {
+        GeneratorConfig.Style p = GeneratorConfig.PRESETS.get(preset);
+        if (p == null) throw new IllegalArgumentException("Unknown style preset " + preset + "; known: " + GeneratorConfig.PRESETS.keySet());
+        cfg.style = new GeneratorConfig.Style(p.errorFormat, p.dtoSplit);
+    }
+
     public static ApiModel mapSpec(Path spec, GeneratorConfig cfg) throws Exception {
         SpecLoader.Loaded l = new SpecLoader().fromText(Files.readString(spec), spec.getFileName().toString());
         return new OpenApiMapper(l.api, cfg, Map.of()).sourceUrl(l.source).map();

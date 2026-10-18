@@ -1,0 +1,30 @@
+'use client'
+
+// Shared by the [=module.name] pages. [=generatedNote]
+import { useQuery } from '@tanstack/react-query'
+import { useApi } from '@/lib/api/api-provider'
+import type { Page } from '@/lib/api/types'
+
+export interface Option {
+  value: string
+  label: string
+}
+
+/** The first rows of another table, as the choices of a select (value: its key, label: one of its texts). */
+export function useOptions(path: string, idKey: string, labelKey: string) {
+  const api = useApi()
+  return useQuery({
+    queryKey: ['[=module.name]', 'options', path],
+    queryFn: async (): Promise<Option[]> => {
+      const page = await api.get<Page<Record<string, unknown>>>(path, { size: 100, sort: `${idKey},asc` })
+      return page.content.map(row => ({ value: String(row[idKey]), label: String(row[labelKey] ?? row[idKey]) }))
+    },
+  })
+}
+
+/** An ISO instant as the value of a datetime-local input, in the browser's time zone. */
+export function toLocalInput(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}

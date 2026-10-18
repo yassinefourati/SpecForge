@@ -1,0 +1,382 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specforge.io/contracts/plan.schema.json",
+  "title": "SpecForge generation plan",
+  "description": "The user's database-flow decisions (PLAN-1). Decisions only (PLAN-5): anything not decided here is recomputed from the snapshot by the suggestion engine. Never contains secrets. Bump planVersion on any incompatible change.",
+  "type": "object",
+  "required": [
+    "planVersion"
+  ],
+  "properties": {
+    "planVersion": {
+      "const": 1
+    },
+    "specforgeVersion": {
+      "type": "string"
+    },
+    "rulesetVersion": {
+      "type": "string",
+      "description": "Suggestion ruleset the plan was made with, e.g. 2026.10."
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string"
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Id of a saved connection; never the connection's secrets."
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "select": {
+      "type": "object",
+      "description": "Which tables become entities (SEL-1, SEL-2). Patterns are qualified names; * matches any run of characters. Empty include = every table.",
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entities": {
+      "type": "object",
+      "description": "Per-table decisions by qualified table name, e.g. administration.users.",
+      "additionalProperties": {
+        "$ref": "#/$defs/entityDecision"
+      }
+    },
+    "controllers": {
+      "type": "array",
+      "description": "Use-case controllers composed from several entities (OPS-3); empty = one controller per entity.",
+      "items": {
+        "$ref": "#/$defs/controllerDecision"
+      }
+    },
+    "modules": {
+      "type": "object",
+      "description": "ARCH-3: the module of each table (qualified name → module name) in the modular architecture; absent tables take the suggestion.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "entityDecision": {
+      "type": "object",
+      "properties": {
+        "className": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "operations": {
+          "type": "object",
+          "description": "Operation → enabled (OPS-2). Missing = suggested default (enabled).",
+          "propertyNames": {
+            "enum": [
+              "create",
+              "read",
+              "list",
+              "update",
+              "patch",
+              "delete"
+            ]
+          },
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "keyColumns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Chosen key for a table without a primary key (SEL-4)."
+        },
+        "readOnly": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "unselectedForeignKeys": {
+          "type": "object",
+          "description": "FK column → handling when the target table is not selected (SEL-3).",
+          "additionalProperties": {
+            "enum": [
+              "ID",
+              "IGNORE"
+            ]
+          }
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "API path of the entity's controller, without the leading slash (OPS-5)."
+        },
+        "controllerName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Z][A-Za-z0-9_]*$",
+          "description": "Class name of the entity's controller (OPS-5)."
+        },
+        "controller": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "false = no controller for this entity; entity, repository and service stay (OPS-5)."
+        },
+        "idStrategy": {
+          "enum": [
+            "IDENTITY",
+            "SEQUENCE",
+            "UUID",
+            "ASSIGNED",
+            null
+          ],
+          "description": "Key strategy for a single-column key (MAP-1, MAP-11)."
+        },
+        "sequenceName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "With idStrategy SEQUENCE: the sequence, optionally schema.name."
+        },
+        "allocationSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "asEntity": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "A pure join table generated as an entity of its own instead of a many-to-many (MAP-4)."
+        },
+        "columns": {
+          "type": "object",
+          "description": "By column name (MAP-3, MAP-11).",
+          "additionalProperties": {
+            "$ref": "#/$defs/columnDecision"
+          }
+        },
+        "relations": {
+          "type": "object",
+          "description": "By foreign-key column (MAP-4, MAP-11).",
+          "additionalProperties": {
+            "$ref": "#/$defs/relationDecision"
+          }
+        }
+      }
+    },
+    "columnDecision": {
+      "type": "object",
+      "description": "One column's mapping. Null fields keep the suggestion.",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Java property name."
+        },
+        "javaType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Simple Java type name, e.g. Long, BigDecimal, OffsetDateTime."
+        },
+        "include": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "false = left out of the entity and the API."
+        },
+        "filter": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Offered as an equality filter on the list endpoint."
+        },
+        "sort": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Offered for sorting the list endpoint."
+        },
+        "search": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Searched by the list endpoint's free-text parameter q (CONTRACT-3)."
+        },
+        "range": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Offered as a range filter, <property>From / <property>To (CONTRACT-3)."
+        }
+      }
+    },
+    "relationDecision": {
+      "type": "object",
+      "description": "One foreign key's mapping. Null fields keep the suggestion.",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The many-to-one property."
+        },
+        "dtoName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The DTO property carrying the referenced id."
+        },
+        "inverse": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Also map the inverse one-to-many on the referenced entity (opt-in)."
+        },
+        "inverseName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "controllerDecision": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Base name: Checkout becomes CheckoutController and CheckoutService."
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Base path, e.g. checkout."
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/useCaseOperation"
+          }
+        }
+      }
+    },
+    "useCaseOperation": {
+      "type": "object",
+      "required": [
+        "kind",
+        "entity"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "ENTITY",
+            "AGGREGATE_CREATE",
+            "AGGREGATE_UPDATE",
+            "WITH_CHILDREN",
+            "CHILDREN"
+          ]
+        },
+        "entity": {
+          "type": "string",
+          "description": "The entity, or the parent of the parent / children shapes (qualified table name)."
+        },
+        "operation": {
+          "enum": [
+            "create",
+            "read",
+            "list",
+            "update",
+            "patch",
+            "delete",
+            null
+          ],
+          "description": "For ENTITY."
+        },
+        "child": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The child table of the parent / children shapes."
+        },
+        "via": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The child's foreign-key column to the parent, when it has several."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Java method name; null = derived."
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Path below the controller's base path; null = derived."
+        },
+        "keepInEntityController": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "For ENTITY: also keep the operation in the entity's own controller (OPS-4)."
+        }
+      }
+    }
+  }
+}

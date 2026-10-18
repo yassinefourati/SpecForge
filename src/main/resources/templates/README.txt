@@ -36,7 +36,23 @@ Variables available in every template
              upstreamUrl (proxy mode), resources, entities, dtos, enums, security
   config     the full settings object;   options = config.options (lombok, validation, namespace, serviceMode,
              proxy (true in PROXY service mode), upstreamUrl, ...)
-  secCfg     security settings (accessRules, scopeAuthorityPrefix, upstreamAuth)
+  secCfg     security settings (accessRules, scopeAuthorityPrefix, upstreamAuth, databaseAuth (BASIC | JWT),
+             databaseJwt(), jwtRoles (SCOPES | KEYCLOAK), keycloakRoles(), readRole, writeRole)
+  Architectures   templates/architectures/<name>/manifest.json lays an architecture over these templates: its
+             "remove" list drops entries by id, its "templates" are added; an entry's "package" (e.g. "domain",
+             "portOut") picks a per-table package other than its layer's (hexagonal: domain, portOut)
+  pkgOf(cls, layer)  the package of a table's class in a layer ("entities", "models", "repositories", "services",
+             "controllers"), e.g. pkgOf(r.targetClass, "entities"); per-entity templates also get their own table's
+             packages as entityPackage, modelPackage, repositoryPackage, servicePackage, controllerPackage (ARCH-1)
+  sharedModelPackage / sharedServicePackage  where PageResponse / ValueConversions live, whatever the layout
+  checks     what the project gets for migrations and tests: flyway (NONE | BASELINE | SCHEMA, after fallbacks), ddl
+             (V1__baseline.sql), flywayModule, flywaySchemas, controllerTests, applicationTest, inMemory,
+             containerClass, containerImport, containerImage, genericContainer(), webMvcTestImport,
+             autoConfigureMockMvcImport
+  lists      database-flow list endpoints: textSearch (NONE | Q), q(), rangeFilters, unknownSort (REJECT | IGNORE),
+             lenientSort()
+  style      code style (Settings → Code style): errorFormat (LEGACY_MAP | PROBLEM_DETAIL), problemDetail(),
+             dtoSplit (SINGLE | REQUEST_RESPONSE), requestResponse()
   security   api.security: present, usesBasic, usesJwt, usesApiKey, schemes, apiKeys, rules, issuerUri, jwkSetUri,
              proxyForward, credentials (in, name, scheme, excluded), forwardList(), excludedList(),
              outboundType, outboundIn, outboundName
@@ -62,8 +78,12 @@ Per scope
 Database flow (flow DATABASE; ENTITY scope): entity.db (also item.db) is the table's mapping
   db         className, varName, table, schema, qualifiedName, path, comment, readOnly, dtoName, mapperName,
              serviceName, controllerName, repositoryName, entityImports, dtoImports, uniqueColumns,
-             filterable, sortable, ops / op("create"|"read"|"list"|"update"|"patch"|"delete"),
-             fields, dtoFields(), relations, manyToMany, id
+             filterable, sortable, searchable (searched by q; empty unless lists.q()), rangeable (…From / …To;
+             empty unless lists.rangeFilters), ops / op("create"|"read"|"list"|"update"|"patch"|"delete"),
+             fields, dtoFields(), dtoComponents(), relations, manyToMany, id,
+             split (true in the Request and Response style), requestName (the record accepted on create /
+             update; equals dtoName unless split), requestComponents() (its components: an assigned key, writable
+             fields, relation ids, many-to-many id sets; equals dtoComponents() unless split)
   db.id      kind (SINGLE | COMPOSITE), strategy (IDENTITY | SEQUENCE | UUID | ASSIGNED), field, keyFields,
              sequenceSchema, sequenceName, allocationSize, javaType, composite(), generated()
   DbField    column, name, cap, javaType, jdbcTypeCode, nullable, length, precision, scale, writable, dbDefault,

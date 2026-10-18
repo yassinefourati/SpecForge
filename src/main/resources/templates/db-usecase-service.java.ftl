@@ -7,18 +7,27 @@ import [=i];
 import java.util.ArrayList;
 import java.util.List;
 <#list u.services as e>
-import [=modelPackage].[=e.dtoName];
+import [=pkgOf(e.className, "models")].[=e.dtoName];
+import [=pkgOf(e.className, "models")].[=e.requestName];
+import [=pkgOf(e.className, "services")].[=e.serviceName];
 </#list>
 <#list u.mappers as e>
-import [=modelPackage].[=e.dtoName];
+import [=pkgOf(e.className, "models")].[=e.dtoName];
+import [=pkgOf(e.className, "services")].[=e.mapperName];
 </#list>
 <#list u.repositories as e>
-import [=repositoryPackage].[=e.repositoryName];
+import [=pkgOf(e.className, "repositories")].[=e.repositoryName];
 </#list>
 <#list u.records as r>
 import [=modelPackage].[=r.name];
 </#list>
-import [=modelPackage].PageResponse;
+<#list u.operations as op><#if op.kind != "ENTITY">
+import [=pkgOf(op.child.className, "services")].[=op.child.serviceName];
+import [=pkgOf(op.child.className, "models")].[=op.child.requestName];
+import [=pkgOf(op.child.className, "models")].[=op.child.dtoName];
+import [=pkgOf(op.entity.className, "models")].[=op.entity.dtoName];
+</#if></#list>
+import [=sharedModelPackage].PageResponse;
 import [=exceptionPackage].ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -92,7 +101,7 @@ public class [=u.serviceName] {
 </#if>
         List<[=c.dtoName]> [=op.childrenProperty] = new ArrayList<>();
         for ([=op.itemRecord] item : request.[=op.childrenProperty]()) {
-            [=op.childrenProperty].add([=c.varName]Service.create(new [=c.dtoName](<#list c.dtoComponents() as f><#if f.name == op.linkComponent>[=op.parentProperty].[=pid]()<#else>item.[=f.name]()</#if><#sep>, </#sep></#list>)));
+            [=op.childrenProperty].add([=c.varName]Service.create(new [=c.requestName](<#list c.requestComponents() as f><#if f.name == op.linkComponent>[=op.parentProperty].[=pid]()<#else>item.[=f.name]()</#if><#sep>, </#sep></#list>)));
         }
         return new [=op.responseRecord]([=op.parentProperty], [=op.childrenProperty]);
     }

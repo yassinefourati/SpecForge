@@ -24,8 +24,17 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 <#if security.usesJwt>
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+<#if secCfg.keycloakRoles()>
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 </#if>
-<#assign matchers = secCfg.accessRules != "METHOD">
+</#if>
+<#-- database-flow controllers carry no @PreAuthorize, so their rules are always URL rules -->
+<#assign matchers = secCfg.accessRules != "METHOD" || source.kind == "DATABASE">
 <#assign methodSecurity = secCfg.accessRules != "MATCHERS">
 
 /**
@@ -91,13 +100,33 @@ public class SecurityConfig {
     }
 <#if security.usesJwt>
 
+<#if secCfg.keycloakRoles()>
+    /**
+     * Maps Keycloak realm roles ("realm_access.roles") to ROLE_ authorities, so hasRole("admin") matches the realm
+     * role "admin", and the token's scopes to authorities such as [=secCfg.scopeAuthorityPrefix]read.
+     */
+<#else>
     /** Maps the token's scopes ("scope" / "scp" claims) to authorities such as [=secCfg.scopeAuthorityPrefix]read. */
+</#if>
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter scopes = new JwtGrantedAuthoritiesConverter();
         scopes.setAuthorityPrefix("[=secCfg.scopeAuthorityPrefix?j_string]");
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+<#if secCfg.keycloakRoles()>
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            List<GrantedAuthority> authorities = new ArrayList<>(scopes.convert(jwt));
+            Object realm = jwt.getClaim("realm_access");
+            if (realm instanceof Map<?, ?> access && access.get("roles") instanceof Collection<?> roles) {
+                for (Object role : roles) {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                }
+            }
+            return authorities;
+        });
+<#else>
         converter.setJwtGrantedAuthoritiesConverter(scopes);
+</#if>
         return converter;
     }
 </#if>

@@ -16,7 +16,17 @@
       "flow": "DATABASE",
       "template": "db-dto.java.ftl",
       "fileName": "[=entity.db.dtoName].java",
-      "description": "Database flow: API record per table, with validation from constraints"
+      "description": "Database flow: API record per table, with validation from constraints (the response record in the Request and Response style)"
+    },
+    {
+      "id": "db-request",
+      "layer": "models",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "db-request.java.ftl",
+      "fileName": "[=entity.db.requestName].java",
+      "when": "entity.db.split",
+      "description": "Database flow, Request and Response style: the record accepted on create and update (writable values only)"
     },
     {
       "id": "db-page-response",
@@ -232,6 +242,80 @@
       "template": "application.properties.ftl",
       "fileName": "application.properties",
       "description": "Database, JPA and security properties"
+    },
+    {
+      "id": "db-flyway-v1",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "RESOURCE",
+      "flow": "DATABASE",
+      "template": "db-flyway-v1.sql.ftl",
+      "fileName": "db/migration/V1__baseline.sql",
+      "when": "checks.flyway == \"SCHEMA\"",
+      "description": "Database flow, Flyway: the selected tables' schema as version 1 (MIG-2)"
+    },
+    {
+      "id": "db-flyway-readme",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "RESOURCE",
+      "flow": "DATABASE",
+      "template": "db-flyway-readme.md.ftl",
+      "fileName": "db/migration/README.md",
+      "when": "checks.flyway != \"NONE\"",
+      "description": "Database flow, Flyway: how to add migrations (MIG-1)"
+    },
+    {
+      "id": "db-controller-test",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "kind": "TEST",
+      "flow": "DATABASE",
+      "template": "db-controller-test.java.ftl",
+      "fileName": "[=entity.db.controllerName]Test.java",
+      "when": "checks.controllerTests && entity.db.hasController()",
+      "description": "Database flow: web-layer test per controller (TEST-1)"
+    },
+    {
+      "id": "db-application-it",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "TEST",
+      "flow": "DATABASE",
+      "template": "db-application-it.java.ftl",
+      "fileName": "DatabaseSchemaTests.java",
+      "when": "checks.applicationTest",
+      "description": "Database flow: the application against a database created by Flyway (TEST-2)"
+    },
+    {
+      "id": "db-module-info",
+      "layer": "controllers",
+      "scope": "MODULE",
+      "flow": "DATABASE",
+      "template": "db-module-info.java.ftl",
+      "fileName": "package-info.java",
+      "description": "Modular architecture: a module's declaration and allowed dependencies (ARCH-4)"
+    },
+    {
+      "id": "db-shared-info",
+      "layer": "exceptions",
+      "scope": "GLOBAL",
+      "flow": "DATABASE",
+      "template": "db-shared-info.java.ftl",
+      "fileName": "package-info.java",
+      "when": "api.modules?has_content",
+      "description": "Modular architecture: the shared module (ARCH-4)"
+    },
+    {
+      "id": "db-modular-test",
+      "layer": "project",
+      "scope": "GLOBAL",
+      "kind": "TEST",
+      "flow": "DATABASE",
+      "template": "db-modular-test.java.ftl",
+      "fileName": "ModularStructureTests.java",
+      "when": "api.modules?has_content",
+      "description": "Modular architecture: Spring Modulith verification and docs (ARCH-4)"
     }
   ]
 }

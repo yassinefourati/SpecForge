@@ -47,12 +47,25 @@ public final class DbModel {
         /** DTO property names that may be used to filter and sort the list operation */
         public List<String> filterable = new ArrayList<>();
         public List<String> sortable = new ArrayList<>();
+        /** DTO properties the free-text parameter q searches, case-insensitively (CONTRACT-3) */
+        public List<String> searchable = new ArrayList<>();
+        /** DTO properties offered as ranges, &lt;name&gt;From / &lt;name&gt;To (CONTRACT-3) */
+        public List<String> rangeable = new ArrayList<>();
+        /** REQUEST_RESPONSE style (STYLE-9): {@link #requestName} is written, {@link #dtoName} is read */
+        public boolean split;
         // filled in by the generator from the naming patterns and layer packages
+        /** the record returned by the API (XxxDto, or XxxResponse when split) */
         public String dtoName = "";
+        /** the record the API accepts on create / update; equals {@link #dtoName} unless split */
+        public String requestName = "";
         public String mapperName = "";
         public String serviceName = "";
         public String controllerName = "";
         public String repositoryName = "";
+        /** ARCH-3: the module the table belongs to (modular architecture), "" otherwise */
+        public String module = "";
+        /** package of this table's class in each per-entity layer (entities, models, …), from the layout (ARCH-1) */
+        public Map<String, String> packages = new LinkedHashMap<>();
         public TreeSet<String> entityImports = new TreeSet<>();
         public TreeSet<String> dtoImports = new TreeSet<>();
         public List<String> warnings = new ArrayList<>();
@@ -80,6 +93,21 @@ public final class DbModel {
                 f.cap = m.dtoCap;
                 f.javaType = "Set<" + m.targetIdType + ">";
                 out.add(f);
+            }
+            return out;
+        }
+
+        /**
+         * The components of the record accepted on create / update, in DTO order. Unless split, the same as
+         * {@link #dtoComponents()}. Split: only what the mapper copies into the entity, i.e. an assigned key (never a
+         * generated one), writable fields, relation ids and many-to-many id sets.
+         */
+        public List<DbField> requestComponents() {
+            if (!split) return dtoComponents();
+            List<DbField> out = new ArrayList<>();
+            for (DbField f : dtoComponents()) {
+                boolean key = id.composite() ? id.keyFields.contains(f) : f == id.field;
+                if (key ? !id.generated() : f.writable || !fields.contains(f)) out.add(f);
             }
             return out;
         }
@@ -133,6 +161,8 @@ public final class DbModel {
         public boolean writable = true;
         /** the database fills it when omitted (default value, identity) */
         public boolean dbDefault;
+        /** the column's default as the source engine spells it (e.g. "'NEW'::character varying"), null when none */
+        public String defaultValue;
         /** ready-made annotations for the DTO, e.g. "@NotNull", "@Size(max = 100)" */
         public List<String> validations = new ArrayList<>();
         /** set when this field is the id of a relation, e.g. "user" for userId (DTO only) */
@@ -191,9 +221,18 @@ public final class DbModel {
         return "findAllBy" + link.cap + "_" + link.targetIdCap;
     }
 
+    /** A module of the modular architecture (ARCH-3). */
+    public static class DbModule {
+        public String name = "";
+        public String displayName = "";
+        public List<String> tables = new ArrayList<>();
+    }
+
     /** A use-case controller and its transactional service (OPS-3). */
     public static class DbUseCase {
         public String name = "";
+        /** ARCH-3: the module it belongs to (its tables' module), "" when not modular */
+        public String module = "";
         public String path = "";
         public String controllerName = "";
         public String serviceName = "";

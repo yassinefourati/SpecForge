@@ -86,6 +86,10 @@ public class GenerationPlan {
         public Boolean filter;
         /** offered for sorting the list endpoint (OPS-1) */
         public Boolean sort;
+        /** searched by the list endpoint's free-text parameter q (CONTRACT-3) */
+        public Boolean search;
+        /** offered as a range filter, &lt;property&gt;From / &lt;property&gt;To (CONTRACT-3) */
+        public Boolean range;
     }
 
     /** One foreign key's mapping (MAP-4, MAP-11). Null fields keep the suggestion. */
@@ -134,6 +138,9 @@ public class GenerationPlan {
         /** for ENTITY: also keep the operation in the entity's own controller (OPS-4); default false */
         public Boolean keepInEntityController;
     }
+
+    /** ARCH-3: the module of each table (qualified name → module), for the modular architecture; absent = the suggestion */
+    public Map<String, String> modules = new LinkedHashMap<>();
 
     public static boolean matches(String pattern, String qualifiedName) {
         StringBuilder rx = new StringBuilder();

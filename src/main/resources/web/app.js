@@ -166,6 +166,54 @@ function validateField(inp) {
   inp.classList.toggle('invalid', bad);
 }
 
+// ---------- Code style (STYLE-6, STYLE-7) ----------
+/** The preset whose values equal the current style, or '' when the user mixed choices. */
+function stylePresetOf(style) {
+  const presets = (state.info && state.info.stylePresets) || {};
+  for (const [name, p] of Object.entries(presets)) if (Object.keys(p).every(k => style && style[k] === p[k])) return name;
+  return '';
+}
+function applyStylePreset(name) {
+  const p = state.info && state.info.stylePresets && state.info.stylePresets[name];
+  if (!p) return;
+  state.config.style = { ...state.config.style, ...p };
+  saveLocal();
+  bindFields();
+  toast(name === 'MODERN' ? 'Modern style applied; every choice can still be changed.' : 'Back to the style of earlier versions.');
+}
+/** ARCH-2: the packages one table gets, for the chosen architecture. */
+function refreshArchitecture() {
+  const out = $('#archPreview');
+  if (!out || !state.config) return;
+  const base = state.config.basePackage || 'com.example.api';
+  const sub = k => { const s = ((state.config.layers || {})[k] || {}).subPackage; return s ? base + '.' + s : base; };
+  const arch = state.config.architecture;
+  const lines = arch === 'HEXAGONAL'
+    ? [base + '.customer.domain.model  Customer (plain Java)',
+       base + '.customer.domain.port.in  CustomerUseCases, CustomerRequest, CustomerResponse',
+       base + '.customer.domain.port.out  CustomerRepositoryPort',
+       base + '.customer.application  CustomerService',
+       base + '.customer.adapter.in.web  CustomerController',
+       base + '.customer.adapter.out.persistence  CustomerJpaEntity, CustomerPersistenceAdapter, …']
+    : arch === 'MODULAR'
+    ? [base + '.sales  package-info (module), CustomerController, CustomerRequest, CustomerResponse',
+       base + '.sales.internal  Customer, CustomerRepository, CustomerService, CustomerMapper',
+       base + '.shared  PageResponse, ValueConversions, errors (open module)']
+    : arch === 'FEATURE'
+    ? [base + '.customer', '  Customer, CustomerRepository, CustomerService,', '  CustomerMapper, CustomerController, CustomerDto',
+       sub('models') + '  PageResponse (shared)']
+    : [sub('entities') + '  Customer', sub('repositories') + '  CustomerRepository', sub('services') + '  CustomerService, CustomerMapper',
+       sub('controllers') + '  CustomerController', sub('models') + '  CustomerDto, PageResponse'];
+  out.textContent = lines.join('\n');
+}
+
+function refreshStyle() {
+  const current = stylePresetOf(state.config && state.config.style);
+  $$('.choice[data-preset]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.preset === current)));
+  const info = $('#stylePresetInfo');
+  if (info) info.textContent = current ? '' : 'Your own mix of choices.';
+}
+
 function bindFields(root = document) {
   $$('[data-path]', root).forEach(inp => {
     const v = getPath(state.config, inp.dataset.path);
@@ -178,6 +226,8 @@ function bindFields(root = document) {
       validateField(inp);
       saveLocal();
       refreshDerived();
+      refreshStyle();
+      refreshArchitecture();
     });
   });
   $$('[data-browse]', root).forEach(b => {
@@ -193,6 +243,8 @@ function bindFields(root = document) {
     });
   });
   refreshDerived();
+  refreshStyle();
+  refreshArchitecture();
 }
 
 // ---------- Spring Boot and Java pickers (VER-1, VER-2) ----------
@@ -245,6 +297,8 @@ function refreshDerived() {
   syncBootPicker();
   const proxy = (state.config.options || {}).serviceMode === 'PROXY';
   $$('[data-show-when="proxy"]').forEach(e => { e.hidden = !proxy; });
+  const contract = getPath(state.config, 'contract.kind') === 'ADMIN_TEMPLATE';
+  $$('[data-show-when="contract"]').forEach(e => { e.hidden = !contract; });
   $$('[data-hide-when="proxy"]').forEach(e => { e.hidden = proxy || (e.dataset.flow === 'spec' && state.source === 'db'); });
   const up = $('#upstreamUrl');
   if (up) up.placeholder = (state.analysis && state.analysis.upstreamUrl) || 'from the spec';
@@ -787,7 +841,7 @@ function setSource(src) {
   state.source = src;
   try { if (src) localStorage.setItem(SOURCE_KEY, src); } catch (e) { /* storage unavailable */ }
   $('#sourceSwitch').value = src || '';
-  $$('.choice').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.source === src)));
+  $$('.choice[data-source]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.source === src)));
   $('#specFlow').hidden = src !== 'spec';
   $('#dbFlow').hidden = src !== 'db';
   $$('.db-only').forEach(e => { e.hidden = src !== 'db'; });
@@ -1189,6 +1243,20 @@ function mapCard(e, view) {
     })), el('div', { class: 'row gap' }, el('label', { class: 'check' }, ctrlOn, 'generate'), ctrlName)),
     el('label', { class: 'check' }, ro, 'Read-only (list and read only)', e.readOnly && !d.readOnly ? el('span', { class: 'muted small-text' }, ' – ' + e.readOnlyReason) : null)));
 
+  // module of the modular architecture (ARCH-3)
+  if (state.config.architecture === 'MODULAR') {
+    const plan = state.config.databasePlan;
+    if (!plan.modules) plan.modules = {};
+    const mod = textInput(e.module, 'Module of ' + e.className, v => {
+      const name = (v || '').trim().toLowerCase();
+      if (!name || name === sug.module) delete plan.modules[e.table]; else plan.modules[e.table] = name;
+      planChanged();
+    });
+    card.append(el('label', { class: 'field' },
+      el('span', null, 'Module ', yours(plan.modules[e.table] != null, () => { delete plan.modules[e.table]; planChanged(); })), mod,
+      el('small', { class: 'muted' }, 'Suggested: tables linked by foreign keys. A table of another module is referred to by its id.')));
+  }
+
   // key (MAP-1, MAP-7)
   if (e.id.kind !== 'COMPOSITE') {
     const strat = el('select', { 'aria-label': 'Key strategy of ' + e.className }, KEY_STRATEGIES.map(k => el('option', { value: k }, k.toLowerCase())));
@@ -1210,7 +1278,9 @@ function mapCard(e, view) {
   const rows = e.columns.map(c => columnRow(e, c, view));
   card.append(el('div', { class: 'table-wrap' }, el('table', { class: 'table editor' },
     el('thead', null, el('tr', null, el('th', null, 'Column'), el('th', null, 'Property'), el('th', null, 'Java type'),
-      el('th', { class: 'center' }, 'Include'), el('th', { class: 'center' }, 'Filter'), el('th', { class: 'center' }, 'Sort'), el('th', null, 'Notes'))),
+      el('th', { class: 'center' }, 'Include'), el('th', { class: 'center' }, 'Filter'), el('th', { class: 'center' }, 'Sort'),
+      el('th', { class: 'center', title: 'Searched by the list parameter q (Settings → List endpoints)' }, 'Search'),
+      el('th', { class: 'center', title: 'Offered as …From / …To on the list (Settings → List endpoints)' }, 'Range'), el('th', null, 'Notes'))),
     el('tbody', null, rows))));
 
   // relations (MAP-4)
@@ -1273,6 +1343,7 @@ function columnRow(e, c, view) {
     el('td', null, el('code', null, c.column), el('div', { class: 'muted small-text' }, c.sqlType + (c.nullable ? '' : ' not null'))),
     el('td', null, name), el('td', null, type),
     el('td', { class: 'center' }, include), el('td', { class: 'center' }, box('filter', 'Filter')), el('td', { class: 'center' }, box('sort', 'Sort')),
+    el('td', { class: 'center' }, box('search', 'Search')), el('td', { class: 'center' }, box('range', 'Range')),
     el('td', null, notes, has ? yours(true, reset) : null));
 }
 
@@ -1859,7 +1930,8 @@ function wire() {
   $('#specUrl').addEventListener('keydown', e => { if (e.key === 'Enter') analyze(); });
 
   $$('.step').forEach(b => b.addEventListener('click', () => !b.disabled && goStep(b.dataset.step)));
-  $$('.choice').forEach(c => c.addEventListener('click', () => setSource(c.dataset.source)));
+  $$('.choice[data-source]').forEach(c => c.addEventListener('click', () => setSource(c.dataset.source)));
+  $$('.choice[data-preset]').forEach(c => c.addEventListener('click', () => applyStylePreset(c.dataset.preset)));
   $('#sourceSwitch').addEventListener('change', e => setSource(e.target.value));
   wireDatabase();
   $('#btnToStep2').onclick = () => goStep(2);

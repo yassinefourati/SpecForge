@@ -19,12 +19,13 @@ import java.util.Set;
 import [=ns].validation.Valid;
 </#if>
 <#list direct?values as e>
-import [=entityPackage].[=e.className];
-import [=modelPackage].[=e.dtoName];
-import [=servicePackage].[=e.serviceName];
+import [=pkgOf(e.className, "entities")].[=e.className];
+import [=pkgOf(e.className, "models")].[=e.dtoName];
+import [=pkgOf(e.className, "models")].[=e.requestName];
+import [=pkgOf(e.className, "services")].[=e.serviceName];
 </#list>
 <#list u.operations as op><#if op.kind != "ENTITY">
-import [=modelPackage].[=op.child.dtoName];
+import [=pkgOf(op.child.className, "models")].[=op.child.dtoName];
 <#if op.responseRecord?has_content>
 import [=modelPackage].[=op.responseRecord];
 </#if>
@@ -32,7 +33,7 @@ import [=modelPackage].[=op.responseRecord];
 import [=modelPackage].[=op.requestRecord];
 </#if>
 </#if></#list>
-import [=modelPackage].PageResponse;
+import [=sharedModelPackage].PageResponse;
 <#if spanning>
 import [=servicePackage].[=u.serviceName];
 </#if>
@@ -98,7 +99,7 @@ public class [=u.controllerName] {
 <#elseif op.operation == "create">
 
     @PostMapping("[=op.path]")
-    public ResponseEntity<[=e.dtoName]> [=op.method](<#if options.validation>@Valid </#if>@RequestBody [=e.dtoName] dto) {
+    public ResponseEntity<[=e.dtoName]> [=op.method](<#if options.validation>@Valid </#if>@RequestBody [=e.requestName] dto) {
         [=e.dtoName] created = [=svc].create(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(<@location e/>.toUri();
         return ResponseEntity.created(location).body(created);
@@ -106,7 +107,7 @@ public class [=u.controllerName] {
 <#elseif op.operation == "update">
 
     @PutMapping("[=op.path]")
-    public ResponseEntity<[=e.dtoName]> [=op.method](<@idParams e/>, <#if options.validation>@Valid </#if>@RequestBody [=e.dtoName] dto) {
+    public ResponseEntity<[=e.dtoName]> [=op.method](<@idParams e/>, <#if options.validation>@Valid </#if>@RequestBody [=e.requestName] dto) {
         return ResponseEntity.ok([=svc].update(<@idExpr e/>, dto));
     }
 <#elseif op.operation == "patch">

@@ -268,6 +268,7 @@ public class DbApi {
             m.put("controllerName", e.controllerNameOverride.isEmpty() ? e.className + "Controller" : e.controllerNameOverride);
             m.put("readOnly", e.readOnly);
             m.put("readOnlyReason", e.readOnlyReason);
+            m.put("module", e.module);
             m.put("joinTable", t != null && SuggestionEngine.isPureJoinTable(t));
             Map<String, Object> id = new LinkedHashMap<>();
             id.put("kind", e.id.kind);
@@ -305,6 +306,7 @@ public class DbApi {
             if (sug != null) {
                 Map<String, Object> sm = new LinkedHashMap<>();
                 sm.put("className", sug.className);
+                sm.put("module", sug.module);
                 sm.put("path", "/" + sug.path);
                 sm.put("idStrategy", sug.id.strategy);
                 sm.put("sequence", sug.id.sequenceName.isEmpty() ? "" : (sug.id.sequenceSchema.isEmpty() ? "" : sug.id.sequenceSchema + ".") + sug.id.sequenceName);
@@ -369,6 +371,8 @@ public class DbApi {
                 m.put("validations", f.validations);
                 m.put("filter", e.filterable.contains(f.name));
                 m.put("sort", e.sortable.contains(f.name));
+                m.put("search", e.searchable.contains(f.name));
+                m.put("range", e.rangeable.contains(f.name));
                 m.put("generated", !f.writable);
                 if (rel != null) m.put("relation", rel.name);
             } else if (rel != null) {

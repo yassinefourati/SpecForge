@@ -21,6 +21,20 @@
     <java.version>[=options.javaVersion]</java.version>
   </properties>
 
+<#if checks.modulithVersion?has_content>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.modulith</groupId>
+        <artifactId>spring-modulith-bom</artifactId>
+        <version>[=checks.modulithVersion]</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</#if>
   <dependencies>
 <#list build.dependencies as d>
 <#if d.hasComment()>
@@ -29,6 +43,9 @@
     <dependency>
       <groupId>[=d.groupId]</groupId>
       <artifactId>[=d.artifactId]</artifactId>
+<#if d.version?has_content>
+      <version>[=d.version]</version>
+</#if>
 <#if d.scope != "compile">
       <scope>[=d.scope]</scope>
 </#if>

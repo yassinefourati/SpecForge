@@ -43,6 +43,9 @@ public class TemplateManager {
          */
         public String flow = "";
         public String description = "";
+        /** ARCH-1: the per-table package the file goes to, when it is not the layer's (e.g. "domain"); "" = the layer */
+        @com.fasterxml.jackson.annotation.JsonProperty("package")
+        public String packageKey = "";
 
         public boolean rendersFor(String sourceKind) {
             String f = flow == null || flow.isBlank() ? ("GLOBAL".equalsIgnoreCase(scope) ? "ANY" : "SPEC") : flow.trim().toUpperCase(java.util.Locale.ROOT);
@@ -53,20 +56,47 @@ public class TemplateManager {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Manifest {
         public List<Entry> templates = new ArrayList<>();
+        /** an architecture's overlay: base entries it replaces (ARCH-6) */
+        public List<String> remove = new ArrayList<>();
     }
 
     private static final Pattern SAFE_NAME = Pattern.compile("[A-Za-z0-9][A-Za-z0-9._-]*");
     private final Path externalDir;
+    /** classpath folder of the bundled templates: "/templates", or a contract's own set (CONTRACT-8) */
+    private final String bundledRoot;
+    /** an architecture's templates, laid over the others: its manifest removes and adds entries (ARCH-6); null = none */
+    private String overlayRoot;
     /** unsaved Studio edits by template name; they win over the folder and the bundled templates (STU-3) */
     private final Map<String, String> drafts = new LinkedHashMap<>();
 
     public TemplateManager(Path externalDir) {
+        this(externalDir, "/templates");
+    }
+
+    private TemplateManager(Path externalDir, String bundledRoot) {
         this.externalDir = externalDir != null && Files.isDirectory(externalDir) ? externalDir : null;
+        this.bundledRoot = bundledRoot;
+    }
+
+    /** The bundled template set of a contract, e.g. "admin-template" (templates/contracts/admin-template/). */
+    public static TemplateManager contract(String name) {
+        if (!SAFE_NAME.matcher(name).matches()) throw new IllegalArgumentException("Bad contract name: " + name);
+        return new TemplateManager(null, "/templates/contracts/" + name);
+    }
+
+    /** A copy with an architecture's bundled overlay, e.g. "hexagonal" (templates/architectures/hexagonal/). */
+    public TemplateManager withArchitecture(String name) {
+        if (!SAFE_NAME.matcher(name).matches()) throw new IllegalArgumentException("Bad architecture name: " + name);
+        TemplateManager t = new TemplateManager(externalDir, bundledRoot);
+        t.drafts.putAll(drafts);
+        t.overlayRoot = "/templates/architectures/" + name;
+        return t;
     }
 
     /** A copy that renders {@code name} from {@code content} instead of its file. */
     public TemplateManager withDraft(String name, String content) {
-        TemplateManager t = new TemplateManager(externalDir);
+        TemplateManager t = new TemplateManager(externalDir, bundledRoot);
+        t.overlayRoot = overlayRoot;
         t.drafts.putAll(drafts);
         if (name != null && content != null && SAFE_NAME.matcher(name).matches()) t.drafts.put(name, content);
         return t;
@@ -83,6 +113,20 @@ public class TemplateManager {
     }
 
     public Manifest manifest() throws IOException {
+        Manifest base = baseManifest();
+        if (overlayRoot == null) return base;
+        Manifest overlay;
+        try (InputStream in = TemplateManager.class.getResourceAsStream(overlayRoot + "/manifest.json")) {
+            if (in == null) throw new IOException("Bundled " + overlayRoot.substring(1) + "/manifest.json is missing from the JAR.");
+            overlay = Json.MAPPER.readValue(in, Manifest.class);
+        }
+        Manifest out = new Manifest();
+        for (Entry e : base.templates) if (!overlay.remove.contains(e.id)) out.templates.add(e);
+        out.templates.addAll(overlay.templates);
+        return out;
+    }
+
+    private Manifest baseManifest() throws IOException {
         if (drafts.containsKey("manifest.json")) return Json.MAPPER.readValue(drafts.get("manifest.json"), Manifest.class);
         if (externalDir != null && Files.isRegularFile(externalDir.resolve("manifest.json"))) {
             try {
@@ -95,8 +139,8 @@ public class TemplateManager {
     }
 
     private Manifest bundledManifest() throws IOException {
-        try (InputStream in = TemplateManager.class.getResourceAsStream("/templates/manifest.json")) {
-            if (in == null) throw new IOException("Bundled templates/manifest.json is missing from the JAR.");
+        try (InputStream in = TemplateManager.class.getResourceAsStream(bundledRoot + "/manifest.json")) {
+            if (in == null) throw new IOException("Bundled " + bundledRoot.substring(1) + "/manifest.json is missing from the JAR.");
             return Json.MAPPER.readValue(in, Manifest.class);
         }
     }
@@ -109,7 +153,8 @@ public class TemplateManager {
             loaders.add(draftLoader);
         }
         if (externalDir != null) loaders.add(new FileTemplateLoader(externalDir.toFile()));
-        loaders.add(new ClassTemplateLoader(TemplateManager.class, "/templates"));
+        if (overlayRoot != null) loaders.add(new ClassTemplateLoader(TemplateManager.class, overlayRoot));
+        loaders.add(new ClassTemplateLoader(TemplateManager.class, bundledRoot));
         Configuration c = new Configuration(Configuration.VERSION_2_3_32);
         c.setTemplateLoader(new MultiTemplateLoader(loaders.toArray(new TemplateLoader[0])));
         c.setDefaultEncoding("UTF-8");

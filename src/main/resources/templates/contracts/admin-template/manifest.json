@@ -1,0 +1,151 @@
+{
+  "contract": "admin-template@1",
+  "templates": [
+    {
+      "id": "at-entity",
+      "layer": "entities",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "entity.java.ftl",
+      "fileName": "[=entity.className].java",
+      "when": "module.has(entity.db)",
+      "description": "JPA entity, extending common.BaseEntity when it has a generated Long key"
+    },
+    {
+      "id": "at-repository",
+      "layer": "repositories",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "repository.java.ftl",
+      "fileName": "[=entity.className]Repository.java",
+      "when": "module.has(entity.db)",
+      "description": "Spring Data repository with specifications"
+    },
+    {
+      "id": "at-dtos",
+      "layer": "models",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "dtos.java.ftl",
+      "fileName": "[=entity.className]Dtos.java",
+      "when": "module.has(entity.db)",
+      "description": "Request and response records, nested in one holder as admin-template does"
+    },
+    {
+      "id": "at-service",
+      "layer": "services",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "service.java.ftl",
+      "fileName": "[=entity.className]Service.java",
+      "when": "module.has(entity.db)",
+      "description": "CRUD with common.Paging, typed filters, q search and ApiException"
+    },
+    {
+      "id": "at-controller",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "flow": "DATABASE",
+      "template": "controller.java.ftl",
+      "fileName": "[=entity.className]Controller.java",
+      "when": "module.has(entity.db)",
+      "description": "REST endpoints under /api/<module>/<path>, writes guarded by the module's permission"
+    },
+    {
+      "id": "at-migration",
+      "layer": "entities",
+      "scope": "GLOBAL",
+      "kind": "RESOURCE",
+      "flow": "DATABASE",
+      "template": "migration.sql.ftl",
+      "fileName": "db/migration/[=module.migrationFile]",
+      "description": "Flyway migration: the tables (when created), the permission and the menu entries"
+    },
+    {
+      "id": "at-module-it",
+      "layer": "controllers",
+      "scope": "GLOBAL",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "module-it.java.ftl",
+      "fileName": "backend/src/test/java/com/admintemplate/[=module.name]/[=module.cap]ModuleIT.java",
+      "description": "Integration test on the project's IntegrationTest: CRUD on every table of the module"
+    },
+    {
+      "id": "at-integration",
+      "layer": "entities",
+      "scope": "GLOBAL",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "INTEGRATION.md.ftl",
+      "fileName": "backend/specforge-[=module.name].md",
+      "description": "The lines to add to the project's own registries (never edited by SpecForge)"
+    },
+    {
+      "id": "at-fe-types",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "fe-types.ts.ftl",
+      "fileName": "frontend/apps/web/src/features/[=module.name]/[=module.of(entity.db).kebab]/types.ts",
+      "when": "module.frontend && module.has(entity.db)",
+      "description": "Frontend: TypeScript types of the API payloads"
+    },
+    {
+      "id": "at-fe-api",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "fe-api.ts.ftl",
+      "fileName": "frontend/apps/web/src/features/[=module.name]/[=module.of(entity.db).kebab]/api.ts",
+      "when": "module.frontend && module.has(entity.db)",
+      "description": "Frontend: React Query hooks (list, save, delete)"
+    },
+    {
+      "id": "at-fe-page",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "fe-page.tsx.ftl",
+      "fileName": "frontend/apps/web/src/features/[=module.name]/[=module.of(entity.db).kebab]/[=module.of(entity.db).kebab]-page.tsx",
+      "when": "module.frontend && module.has(entity.db)",
+      "description": "Frontend: list page with search, sorting, paging, edit and delete"
+    },
+    {
+      "id": "at-fe-form",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "fe-form.tsx.ftl",
+      "fileName": "frontend/apps/web/src/features/[=module.name]/[=module.of(entity.db).kebab]/[=module.of(entity.db).kebab]-form-modal.tsx",
+      "when": "module.frontend && module.has(entity.db)",
+      "description": "Frontend: create / edit dialog with the server's constraints and field errors"
+    },
+    {
+      "id": "at-fe-route",
+      "layer": "controllers",
+      "scope": "ENTITY",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "fe-route.tsx.ftl",
+      "fileName": "frontend/apps/web/src/app/(app)/[=module.name]/[=entity.db.path]/page.tsx",
+      "when": "module.frontend && module.has(entity.db)",
+      "description": "Frontend: the route of the list page"
+    },
+    {
+      "id": "at-fe-shared",
+      "layer": "controllers",
+      "scope": "GLOBAL",
+      "kind": "ROOT",
+      "flow": "DATABASE",
+      "template": "fe-shared.ts.ftl",
+      "fileName": "frontend/apps/web/src/features/[=module.name]/shared.ts",
+      "when": "module.frontend",
+      "description": "Frontend: helpers shared by the module's pages"
+    }
+  ]
+}
